@@ -21,7 +21,7 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
         /// With the cw20 feature, it is allowed to deposit CW20 tokens. These
         /// must be passed in with the cw20_assets and have allowance pre-approved.
         #[cfg(feature = "cw20")]
-        cw20_assets: Option<Cw20Coin>,
+        cw20_assets: Option<Vec<Cw20Coin>>,
         /// The optional receiver of the vault token. If not set, the caller
         /// address will be used instead.
         receiver: Option<Addr>,
