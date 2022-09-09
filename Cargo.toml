@@ -1,0 +1,19 @@
+[package]
+name = "cosmos-vault-standard"
+version = "0.1.0"
+edition = "2018"
+authors = ["Sturdy <sturdy@apollo.farm>"]
+
+[features]
+default = []
+cw20 = []
+lockup = []
+keeper = []
+
+[dependencies]
+cosmwasm-std = "1.0.0"
+schemars = "0.8.8"
+serde = { version = "1.0.137", default-features = false, features = ["derive"] }
+cw-asset = "2.2.0"
+cw-utils = "0.14.0"
+cw20 = "0.14.0"
