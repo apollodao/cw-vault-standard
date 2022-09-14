@@ -60,7 +60,7 @@ pub enum ExtensionExecuteMsg {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub enum QueryMsg<T> {
+pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// Returns `VaultStandardInfo` with information on the version of the vault
     /// standard used as well as any enabled extensions.
     VaultStandardInfo,
