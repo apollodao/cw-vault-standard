@@ -52,9 +52,8 @@ name = "cosmos-vault-standard"
 version = "0.1.0"
 dependencies = [
  "cosmwasm-std",
- "cw-asset",
- "cw-utils 0.14.0",
- "cw20 0.14.0",
+ "cw-utils",
+ "cw20",
  "schemars",
  "serde",
 ]
@@ -149,31 +148,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cw-asset"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3dadc245d6c76cd7ae2c5ec39aefa4a5310cde653d07e23c5577ee0c2cac864e"
-dependencies = [
- "cosmwasm-std",
- "cw-storage-plus 0.13.4",
- "cw1155",
- "cw20 0.13.4",
- "schemars",
- "serde",
-]
-
-[[package]]
-name = "cw-storage-plus"
-version = "0.13.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "648b1507290bbc03a8d88463d7cd9b04b1fa0155e5eef366c4fa052b9caaac7a"
-dependencies = [
- "cosmwasm-std",
- "schemars",
- "serde",
-]
-
-[[package]]
 name = "cw-storage-plus"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -182,18 +156,6 @@ dependencies = [
  "cosmwasm-std",
  "schemars",
  "serde",
-]
-
-[[package]]
-name = "cw-utils"
-version = "0.13.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9dbaecb78c8e8abfd6b4258c7f4fbeb5c49a5e45ee4d910d3240ee8e1d714e1b"
-dependencies = [
- "cosmwasm-std",
- "schemars",
- "serde",
- "thiserror",
 ]
 
 [[package]]
@@ -211,37 +173,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "cw1155"
-version = "0.13.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42197c9a0fd844653177009125f24157e486578289327a3781923e427a8f9bbc"
-dependencies = [
- "cosmwasm-std",
- "cw-utils 0.13.4",
- "schemars",
- "serde",
-]
-
-[[package]]
 name = "cw2"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa74c324af8e3506fd8d50759a265bead3f87402e413c840042af5d2808463d6"
 dependencies = [
  "cosmwasm-std",
- "cw-storage-plus 0.14.0",
- "schemars",
- "serde",
-]
-
-[[package]]
-name = "cw20"
-version = "0.13.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cb782b8f110819a4eb5dbbcfed25ffba49ec16bbe32b4ad8da50a5ce68fec05"
-dependencies = [
- "cosmwasm-std",
- "cw-utils 0.13.4",
+ "cw-storage-plus",
  "schemars",
  "serde",
 ]
@@ -253,7 +191,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4f446f59c519fbac5ab8b9f6c7f8dcaa05ee761703971406b28221ea778bb737"
 dependencies = [
  "cosmwasm-std",
- "cw-utils 0.14.0",
+ "cw-utils",
  "schemars",
  "serde",
 ]

@@ -1,9 +1,7 @@
-#[cfg(not(feature = "cw20"))]
 use cosmwasm_std::Coin;
 use cosmwasm_std::{Addr, Binary, Decimal, Uint128};
 #[cfg(feature = "cw20")]
 use cw20::Cw20Coin;
-use cw_asset::{AssetInfo, AssetListUnchecked};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -85,15 +83,10 @@ pub enum QueryMsg<T> {
     ///
     /// MUST be inclusive of deposit fees. Integrators should be aware of the
     /// existence of deposit fees.
-    ///
-    /// TODO: Weird API to have the same parameter name for two types?
-    /// Should maybe either force everyone to use AssetList which would introduce
-    /// extra dependency on the caller, or have separate names or something?
     PreviewDeposit {
+        coins: Vec<Coin>,
         #[cfg(feature = "cw20")]
-        assets: AssetListUnchecked,
-        #[cfg(not(feature = "cw20"))]
-        assets: Vec<Coin>,
+        cw20s: Vec<Cw20Coin>,
     },
 
     /// Returns `Uint128` vault tokens needed to withdraw the passed in assets.
@@ -101,10 +94,12 @@ pub enum QueryMsg<T> {
     /// TODO: Keep this? See discussion above. If removed PreviewRedeem could be
     /// renamed to PreviewWithdraw.
     PreviewWithdraw {
-        assets: AssetListUnchecked,
+        coins: Vec<Coin>,
+        #[cfg(feature = "cw20")]
+        cw20s: Vec<Cw20Coin>,
     },
 
-    /// Returns `AssetListUnchecked` assets needed to mint `shares` number of
+    /// Returns `AssetsResponse` assets needed to mint `shares` number of
     /// vault tokens.
     ///
     /// TODO: Keep this? Could maybe be useful, but we have no Mint ExecuteMsg
@@ -116,13 +111,13 @@ pub enum QueryMsg<T> {
         shares: Uint128,
     },
 
-    /// Returns `AssetListUnchecked` representing all the assets that would be redeemed for in exchange for
+    /// Returns `AssetsResponse` representing all the assets that would be redeemed for in exchange for
     /// vault tokens. Used by Rover to calculate vault position values.
     PreviewRedeem {
         shares: Uint128,
     },
 
-    /// Returns `AssetListUnchecked` maximum amount of assets that can be
+    /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
     /// deposited into the Vault for the `receiver`, through a call to Deposit.
     ///
     /// MUST return the maximum amount of assets deposit would allow to be
@@ -137,7 +132,7 @@ pub enum QueryMsg<T> {
         receiver: Addr,
     },
 
-    /// Returns `Uint128` maximum amount of vault shares that can be minted upon
+    /// Returns `Option<Uint128>` maximum amount of vault shares that can be minted upon
     /// a Deposit call.
     ///
     /// TODO: Keep this? We don't have a Mint function. Could be combined with
@@ -146,7 +141,7 @@ pub enum QueryMsg<T> {
         receiver: Addr,
     },
 
-    /// Returns `AssetListUnchecked` maximum amount of assets that can be
+    /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
     /// withdrawn from the owner balance in the Vault, through a withdraw call.
     ///
     /// MUST return the maximum amount of assets that could be transferred from
@@ -161,7 +156,7 @@ pub enum QueryMsg<T> {
         owner: Addr,
     },
 
-    /// Returns `Uint128` maximum amount of Vault shares that can be redeemed
+    /// Returns `Option<Uint128>` maximum amount of Vault shares that can be redeemed
     /// from the owner balance in the Vault, through a call to Withdraw
     ///
     /// TODO: Keep this? Could potentially be combined with MaxWithdraw to return
@@ -172,7 +167,7 @@ pub enum QueryMsg<T> {
         owner: Addr,
     },
 
-    /// Returns `AssetListUnchecked` assets managed by vault.
+    /// Returns `AssetsResponse` assets managed by vault.
     /// Useful for display purposes, and does not have to confer the exact
     /// amount of underlying assets.
     TotalAssets,
@@ -186,10 +181,12 @@ pub enum QueryMsg<T> {
     /// instead should reflect the “average-user’s” price-per-share, meaning
     /// what the average user should expect to see when exchanging to and from.
     ConvertToShares {
-        assets: AssetListUnchecked,
+        coins: Vec<Coin>,
+        #[cfg(feature = "cw20")]
+        cw20s: Vec<Cw20Coin>,
     },
 
-    /// Returns `AssetListUnchecked` assets that the Vault would exchange for
+    /// Returns `AssetsResponse` assets that the Vault would exchange for
     /// the amount of shares provided, in an ideal scenario where all the
     /// conditions are met.
     ///
@@ -232,18 +229,22 @@ pub struct VaultStandardInfo {
     pub extensions: Vec<String>,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct AssetsResponse {
+    coins: Vec<Coin>,
+    #[cfg(feature = "cw20")]
+    cw20s: Vec<Cw20Coin>,
+}
+
 /// Returned by QueryMsg::Info and contains information about this vault
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct VaultInfo {
     /// Coins required to enter vault.
     /// Amount will be proportional to the share of which it should occupy in the group
     /// (e.g. { denom: osmo, amount: 1 }, { denom: atom, amount: 1 } indicate a 50-50 split)
-    ///
-    /// TODO: How to handle cw20 feature? See QueryMsg::PreviewDeposit for more info
-    #[cfg(not(feature = "cw20"))]
-    pub deposit_assets: Vec<Coin>,
+    pub deposit_coins: Vec<Coin>,
     #[cfg(feature = "cw20")]
-    pub deposit_assets: AssetListUnchecked,
+    pub deposit_cw20s: Vec<Cw20Coin>,
     /// Denom of vault token
     pub vault_token_denom: String,
 }
@@ -253,9 +254,9 @@ pub enum GeneralizedZapperExecuteMsg {
     Zap {
         /// If cw20 assets are sent, they must be listed here and have pre-approved
         /// allowance set.
-        assets: Option<AssetListUnchecked>,
+        assets: Option<Vec<Coin>>,
         /// The asset the caller wishes to receive
-        receive_asset: AssetInfo,
+        receive_asset: String,
         /// The recipient of the converted assets
         recipient: Addr,
         /// If set will try to call the binary encoded ExecuteMsg on recipient
