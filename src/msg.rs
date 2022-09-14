@@ -32,11 +32,13 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
         /// An optional field containing which address should receive the
         /// withdrawn underlying assets.
         receiver: Option<String>,
-        /// An optional field containing a binary encoded CosmosMsg. If set, the
-        /// vault will return the underlying assets to receiver and assume that
-        /// receiver is a contract and try to execute the binary encoded
-        /// ExecuteMsg on the contract.
-        contract_msg: Option<Binary>,
+        // An optional field containing a binary encoded CosmosMsg. If set, the
+        // vault will return the underlying assets to receiver and assume that
+        // receiver is a contract and try to execute the binary encoded
+        // ExecuteMsg on the contract.
+        //
+        // TODO: Keep this? Figure out best Receiver API.
+        // contract_msg: Option<Binary>,
     },
 
     /// Custom callback functions defined by the vault.
@@ -250,6 +252,12 @@ pub struct VaultInfo {
     pub deposit_cw20s: Vec<Cw20Coin>,
     /// Denom of vault token
     pub vault_token_denom: String,
+}
+
+pub struct VaultReceiveMsg {
+    pub sender: String,
+    pub amount: Uint128,
+    pub msg: Binary,
 }
 
 /// Zapper that does not need to know Vault API

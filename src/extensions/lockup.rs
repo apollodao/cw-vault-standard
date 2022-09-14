@@ -11,11 +11,14 @@ pub enum LockupExecuteMsg {
         /// An optional field containing which address should receive the
         /// withdrawn underlying assets.
         receiver: Option<String>,
-        /// An optional field containing a binary encoded CosmosMsg. If set, the
-        /// vault will return the underlying assets to receiver and assume that
-        /// receiver is a contract and try to execute the binary encoded
-        /// ExecuteMsg on the contract.
-        contract_msg: Option<Binary>,
+        // An optional field containing a binary encoded CosmosMsg. If set, the
+        // vault will return the underlying assets to receiver and assume that
+        // receiver is a contract and try to execute the binary encoded
+        // ExecuteMsg on the contract.
+        //
+        // TODO: Keep this? Figure out best Receiver API.
+        // contract_msg: Option<Binary>,
+        //
         /// The ID of the expired lockup to withdraw from.
         /// If None is passed, the vault will attempt to withdraw all expired
         /// lockup positions. Note that this can fail if there are too many
