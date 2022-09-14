@@ -1,5 +1,5 @@
-use cosmwasm_std::Coin;
 use cosmwasm_std::{Addr, Binary, Decimal, Uint128};
+use cosmwasm_std::{Coin, Empty};
 #[cfg(feature = "cw20")]
 use cw20::Cw20Coin;
 use schemars::JsonSchema;
@@ -12,7 +12,7 @@ use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
+pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
@@ -38,6 +38,9 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
         /// ExecuteMsg on the contract.
         contract_msg: Option<Binary>,
     },
+
+    /// Custom callback functions defined by the vault.
+    Callback(S),
 
     /// Support for custom extensions
     VaultExtension(T),
