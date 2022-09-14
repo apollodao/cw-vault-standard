@@ -1,4 +1,4 @@
-use cosmwasm_std::{Addr, Binary, Decimal, Uint128};
+use cosmwasm_std::{Binary, Decimal, Uint128};
 use cosmwasm_std::{Coin, Empty};
 #[cfg(feature = "cw20")]
 use cw20::Cw20Coin;
@@ -22,7 +22,7 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
         cw20_assets: Option<Vec<Cw20Coin>>,
         /// The optional receiver of the vault token. If not set, the caller
         /// address will be used instead.
-        receiver: Option<Addr>,
+        receiver: Option<String>,
     },
 
     /// Called to withdraw from the vault. The native vault token must be passed
@@ -31,7 +31,7 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     Withdraw {
         /// An optional field containing which address should receive the
         /// withdrawn underlying assets.
-        receiver: Option<Addr>,
+        receiver: Option<String>,
         /// An optional field containing a binary encoded CosmosMsg. If set, the
         /// vault will return the underlying assets to receiver and assume that
         /// receiver is a contract and try to execute the binary encoded
@@ -132,7 +132,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// MUST factor in both global and user-specific limits, like if deposits
     /// are entirely disabled (even temporarily) it MUST return 0.
     MaxDeposit {
-        receiver: Addr,
+        receiver: String,
     },
 
     /// Returns `Option<Uint128>` maximum amount of vault shares that can be minted upon
@@ -141,7 +141,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// TODO: Keep this? We don't have a Mint function. Could be combined with
     /// MaxDeposit to return a struct containing both.
     MaxMint {
-        receiver: Addr,
+        receiver: String,
     },
 
     /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
@@ -156,7 +156,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// MUST factor in both global and user-specific limits, like if withdrawals
     /// are entirely disabled (even temporarily) it MUST return 0.
     MaxWithdraw {
-        owner: Addr,
+        owner: String,
     },
 
     /// Returns `Option<Uint128>` maximum amount of Vault shares that can be redeemed
@@ -167,7 +167,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// withdrawn as well as max vault shares that can be withdrawn in exchange
     /// for assets.
     MaxRedeem {
-        owner: Addr,
+        owner: String,
     },
 
     /// Returns `AssetsResponse` assets managed by vault.
@@ -261,7 +261,7 @@ pub enum GeneralizedZapperExecuteMsg {
         /// The asset the caller wishes to receive
         receive_asset: String,
         /// The recipient of the converted assets
-        recipient: Addr,
+        recipient: String,
         /// If set will try to call the binary encoded ExecuteMsg on recipient
         contract_msg: Option<Binary>,
         /// The slippage tolerance to use when converting. The zapper will use
