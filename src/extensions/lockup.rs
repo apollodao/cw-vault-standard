@@ -10,7 +10,7 @@ pub enum LockupExecuteMsg {
     WithdrawUnlocked {
         /// An optional field containing which address should receive the
         /// withdrawn underlying assets.
-        receiver: Option<Addr>,
+        receiver: Option<String>,
         /// An optional field containing a binary encoded CosmosMsg. If set, the
         /// vault will return the underlying assets to receiver and assume that
         /// receiver is a contract and try to execute the binary encoded
@@ -35,7 +35,7 @@ pub enum LockupExecuteMsg {
     /// immediately return the underlying assets. Used in the event of
     /// liquidation.
     /// TBD: how will this be whitelisted?
-    ForceWithdraw { receiver: Option<Addr> },
+    ForceWithdraw { receiver: Option<String> },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -45,7 +45,7 @@ pub enum LockupQueryMsg {
     /// positions for the `owner`.
     Lockups {
         /// The address of the owner of the lockup
-        owner: Addr,
+        owner: String,
         /// Return results only after this lockup_id
         start_after: Option<u64>,
         /// Max amount of results to return
@@ -53,7 +53,7 @@ pub enum LockupQueryMsg {
     },
 
     /// Returns `Lockup` info about a specific lockup, by owner and ID.
-    Lockup { owner: Addr, lockup_id: u64 },
+    Lockup { owner: String, lockup_id: u64 },
 
     /// Returns `u64` duration of the lockup.
     LockupDuration,

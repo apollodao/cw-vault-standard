@@ -16,9 +16,9 @@ pub struct KeeperJob {
 #[serde(rename_all = "snake_case")]
 pub enum KeeperExecuteMsg {
     /// Callable by vault admin to whitelist a keeper to be able to execute a job
-    WhitelistKeeper { job_id: u64, keeper: Addr },
+    WhitelistKeeper { job_id: u64, keeper: String },
     /// Callable by vault admin to remove a keeper from the whitelist of a job
-    BlacklistKeeper { job_id: u64, keeper: Addr },
+    BlacklistKeeper { job_id: u64, keeper: String },
     /// Execute a keeper job. Should only be able to be called if
     /// QueryMsg::KeeperJobReady returns true, and only by whitelisted
     /// keepers if the whitelist bool on the KeeperJob is set to true.
