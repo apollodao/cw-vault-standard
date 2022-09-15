@@ -13,5 +13,5 @@ keeper = []
 cosmwasm-std = "1.0.0"
 schemars = "0.8.8"
 serde = { version = "1.0.137", default-features = false, features = ["derive"] }
-cw-utils = { version = "0.14.0", optional = true }
-cw20 = { version = "0.14.0", optional = true }
+cw-utils = { version = "^0.13.0", optional = true }
+cw20 = { version = "^0.13.0", optional = true }
