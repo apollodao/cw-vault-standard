@@ -248,6 +248,12 @@ pub struct AssetsResponse {
     pub cw20s: Vec<Cw20Coin>,
 }
 
+impl From<Vec<Coin>> for AssetsResponse {
+    fn from(coins: Vec<Coin>) -> Self {
+        Self { coins }
+    }
+}
+
 #[cfg(feature = "cw20")]
 impl TryFrom<Vec<Asset>> for AssetsResponse {
     type Error = StdError;
