@@ -1,12 +1,9 @@
-use cfg_if::cfg_if;
-
-cfg_if! {
-    if #[cfg(feature = "cw20s")] {
-use cw_asset::{Asset, AssetInfo};
-use std::convert::TryFrom;
-use cw20::Cw20Coin;
-    }
-}
+#[cfg(feature = "cw20s")]
+use {
+    cw20::Cw20Coin,
+    cw_asset::{Asset, AssetInfo},
+    std::convert::TryFrom,
+};
 
 #[cfg(feature = "lockup")]
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
