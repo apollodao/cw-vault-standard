@@ -236,9 +236,9 @@ pub struct VaultStandardInfo {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct AssetsResponse {
-    coins: Vec<Coin>,
+    pub coins: Vec<Coin>,
     #[cfg(feature = "cw20")]
-    cw20s: Vec<Cw20Coin>,
+    pub cw20s: Vec<Cw20Coin>,
 }
 
 /// Returned by QueryMsg::Info and contains information about this vault
