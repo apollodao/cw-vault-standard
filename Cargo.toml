@@ -5,10 +5,10 @@ edition = "2018"
 authors = ["Sturdy <sturdy@apollo.farm>"]
 
 [features]
-default = ["cw20s", "lockup"]
+default = []
 lockup = ["cw-utils"]
 keeper = []
-cw20s = ["cw20", "cw-asset"]
+cw20 = ["dep:cw20", "dep:cw-asset"]
 
 [dependencies]
 cosmwasm-std = "1.0.0"
