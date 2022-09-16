@@ -1,14 +1,23 @@
-use cosmwasm_std::{Binary, Decimal, Uint128};
-use cosmwasm_std::{Coin, Empty};
-#[cfg(feature = "cw20")]
+use cfg_if::cfg_if;
+
+cfg_if! {
+    if #[cfg(feature = "cw20s")] {
+use cw_asset::{Asset, AssetInfo};
+use std::convert::TryFrom;
 use cw20::Cw20Coin;
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+    }
+}
+
+#[cfg(feature = "lockup")]
+use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
 #[cfg(feature = "keeper")]
 use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
-#[cfg(feature = "lockup")]
-use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
+
+use cosmwasm_std::{Binary, Decimal, StdError, StdResult, Uint128};
+use cosmwasm_std::{Coin, Empty};
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -18,7 +27,7 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     Deposit {
         /// With the cw20 feature, it is allowed to deposit CW20 tokens. These
         /// must be passed in with the cw20_assets and have allowance pre-approved.
-        #[cfg(feature = "cw20")]
+        #[cfg(feature = "cw20s")]
         cw20_assets: Option<Vec<Cw20Coin>>,
         /// The optional receiver of the vault token. If not set, the caller
         /// address will be used instead.
@@ -90,7 +99,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// existence of deposit fees.
     PreviewDeposit {
         coins: Vec<Coin>,
-        #[cfg(feature = "cw20")]
+        #[cfg(feature = "cw20s")]
         cw20s: Vec<Cw20Coin>,
     },
 
@@ -100,7 +109,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// renamed to PreviewWithdraw.
     PreviewWithdraw {
         coins: Vec<Coin>,
-        #[cfg(feature = "cw20")]
+        #[cfg(feature = "cw20ss")]
         cw20s: Vec<Cw20Coin>,
     },
 
@@ -187,7 +196,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// what the average user should expect to see when exchanging to and from.
     ConvertToShares {
         coins: Vec<Coin>,
-        #[cfg(feature = "cw20")]
+        #[cfg(feature = "cw20s")]
         cw20s: Vec<Cw20Coin>,
     },
 
@@ -237,8 +246,34 @@ pub struct VaultStandardInfo {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct AssetsResponse {
     pub coins: Vec<Coin>,
-    #[cfg(feature = "cw20")]
+    #[cfg(feature = "cw20s")]
     pub cw20s: Vec<Cw20Coin>,
+}
+
+#[cfg(feature = "cw20s")]
+impl TryFrom<Vec<Asset>> for AssetsResponse {
+    type Error = StdError;
+
+    fn try_from(assets: Vec<Asset>) -> StdResult<Self> {
+        let mut coins = vec![];
+        let mut cw20s = vec![];
+
+        for asset in assets {
+            match &asset.info {
+                AssetInfo::Native(token) => coins.push(Coin {
+                    denom: token.to_string(),
+                    amount: asset.amount,
+                }),
+                AssetInfo::Cw20(addr) => cw20s.push(Cw20Coin {
+                    address: addr.to_string(),
+                    amount: asset.amount,
+                }),
+                _ => return Err(StdError::generic_err("unsupported asset type")),
+            }
+        }
+
+        Ok(AssetsResponse { coins, cw20s })
+    }
 }
 
 /// Returned by QueryMsg::Info and contains information about this vault
@@ -248,7 +283,7 @@ pub struct VaultInfo {
     /// Amount will be proportional to the share of which it should occupy in the group
     /// (e.g. { denom: osmo, amount: 1 }, { denom: atom, amount: 1 } indicate a 50-50 split)
     pub deposit_coins: Vec<Coin>,
-    #[cfg(feature = "cw20")]
+    #[cfg(feature = "cw20s")]
     pub deposit_cw20s: Vec<Cw20Coin>,
     /// Denom of vault token
     pub vault_token_denom: String,
