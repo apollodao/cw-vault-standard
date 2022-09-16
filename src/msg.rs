@@ -1,14 +1,21 @@
-use cosmwasm_std::{Binary, Decimal, Uint128};
-use cosmwasm_std::{Coin, Empty};
 #[cfg(feature = "cw20")]
-use cw20::Cw20Coin;
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use {
+    cosmwasm_std::{StdError, StdResult},
+    cw20::Cw20Coin,
+    cw_asset::{Asset, AssetInfo},
+    std::convert::TryFrom,
+};
+
+#[cfg(feature = "lockup")]
+use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
 #[cfg(feature = "keeper")]
 use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
-#[cfg(feature = "lockup")]
-use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
+
+use cosmwasm_std::{Binary, Decimal, Uint128};
+use cosmwasm_std::{Coin, Empty};
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -239,6 +246,32 @@ pub struct AssetsResponse {
     pub coins: Vec<Coin>,
     #[cfg(feature = "cw20")]
     pub cw20s: Vec<Cw20Coin>,
+}
+
+#[cfg(feature = "cw20")]
+impl TryFrom<Vec<Asset>> for AssetsResponse {
+    type Error = StdError;
+
+    fn try_from(assets: Vec<Asset>) -> StdResult<Self> {
+        let mut coins = vec![];
+        let mut cw20s = vec![];
+
+        for asset in assets {
+            match &asset.info {
+                AssetInfo::Native(token) => coins.push(Coin {
+                    denom: token.to_string(),
+                    amount: asset.amount,
+                }),
+                AssetInfo::Cw20(addr) => cw20s.push(Cw20Coin {
+                    address: addr.to_string(),
+                    amount: asset.amount,
+                }),
+                _ => return Err(StdError::generic_err("unsupported asset type")),
+            }
+        }
+
+        Ok(AssetsResponse { coins, cw20s })
+    }
 }
 
 /// Returned by QueryMsg::Info and contains information about this vault
