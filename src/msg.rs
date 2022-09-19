@@ -12,13 +12,11 @@ use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 #[cfg(feature = "keeper")]
 use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 
+use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::{Binary, Decimal, Uint128};
 use cosmwasm_std::{Coin, Empty};
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
@@ -58,8 +56,7 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
 /// Contains ExecuteMsgs of all enabled extensions. To enable extensions defined
 /// outside of this create, you can define your own `ExtensionExecuteMsg` type
 /// in your contract crate and pass it in as the generic parameter to ExecuteMsg
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum ExtensionExecuteMsg {
     #[cfg(feature = "keeper")]
     Keeper(KeeperExecuteMsg),
@@ -67,15 +64,17 @@ pub enum ExtensionExecuteMsg {
     Lockup(LockupExecuteMsg),
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
+#[derive(QueryResponses)]
 pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// Returns `VaultStandardInfo` with information on the version of the vault
     /// standard used as well as any enabled extensions.
+    #[returns(VaultStandardInfo)]
     VaultStandardInfo,
 
     /// Returns `VaultInfo` representing vault requirements, lockup, & vault
     /// token denom.
+    #[returns(VaultInfo)]
     Info,
 
     /// Returns `Uint128` amount of vault tokens that will be returned for the
@@ -95,6 +94,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     ///
     /// MUST be inclusive of deposit fees. Integrators should be aware of the
     /// existence of deposit fees.
+    #[returns(Uint128)]
     PreviewDeposit {
         coins: Vec<Coin>,
         #[cfg(feature = "cw20")]
@@ -105,6 +105,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     ///
     /// TODO: Keep this? See discussion above. If removed PreviewRedeem could be
     /// renamed to PreviewWithdraw.
+    #[returns(Uint128)]
     PreviewWithdraw {
         coins: Vec<Coin>,
         #[cfg(feature = "cw20")]
@@ -119,15 +120,13 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// the MintMsg on TokenFactory is openened up, anyone could potentially send a MsgMint on
     /// to the TokenFactory, but how would the assets be passed to the contract? Could they
     /// be passed to the TokenFactory and be forwarded to the vault's callback?
-    PreviewMint {
-        shares: Uint128,
-    },
+    #[returns(AssetsResponse)]
+    PreviewMint { shares: Uint128 },
 
     /// Returns `AssetsResponse` representing all the assets that would be redeemed for in exchange for
     /// vault tokens. Used by Rover to calculate vault position values.
-    PreviewRedeem {
-        shares: Uint128,
-    },
+    #[returns(AssetsResponse)]
+    PreviewRedeem { shares: Uint128 },
 
     /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
     /// deposited into the Vault for the `receiver`, through a call to Deposit.
@@ -140,18 +139,16 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     ///
     /// MUST factor in both global and user-specific limits, like if deposits
     /// are entirely disabled (even temporarily) it MUST return 0.
-    MaxDeposit {
-        receiver: String,
-    },
+    #[returns(Option<AssetsResponse>)]
+    MaxDeposit { receiver: String },
 
     /// Returns `Option<Uint128>` maximum amount of vault shares that can be minted upon
     /// a Deposit call.
     ///
     /// TODO: Keep this? We don't have a Mint function. Could be combined with
     /// MaxDeposit to return a struct containing both.
-    MaxMint {
-        receiver: String,
-    },
+    #[returns(Option<Uint128>)]
+    MaxMint { receiver: String },
 
     /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
     /// withdrawn from the owner balance in the Vault, through a withdraw call.
@@ -164,9 +161,8 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     ///
     /// MUST factor in both global and user-specific limits, like if withdrawals
     /// are entirely disabled (even temporarily) it MUST return 0.
-    MaxWithdraw {
-        owner: String,
-    },
+    #[returns(Option<AssetsResponse>)]
+    MaxWithdraw { owner: String },
 
     /// Returns `Option<Uint128>` maximum amount of Vault shares that can be redeemed
     /// from the owner balance in the Vault, through a call to Withdraw
@@ -175,13 +171,13 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// a MaxWithdrawResponse type that includes both max assets that can be
     /// withdrawn as well as max vault shares that can be withdrawn in exchange
     /// for assets.
-    MaxRedeem {
-        owner: String,
-    },
+    #[returns(Option<Uint128>)]
+    MaxRedeem { owner: String },
 
     /// Returns `AssetsResponse` assets managed by vault.
     /// Useful for display purposes, and does not have to confer the exact
     /// amount of underlying assets.
+    #[returns(AssetsResponse)]
     TotalAssets,
 
     /// The amount of shares that the vault would exchange for the amount of
@@ -192,6 +188,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// This calculation may not reflect the “per-user” price-per-share, and
     /// instead should reflect the “average-user’s” price-per-share, meaning
     /// what the average user should expect to see when exchanging to and from.
+    #[returns(Uint128)]
     ConvertToShares {
         coins: Vec<Coin>,
         #[cfg(feature = "cw20")]
@@ -207,18 +204,19 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     /// This calculation may not reflect the “per-user” price-per-share, and
     /// instead should reflect the “average-user’s” price-per-share, meaning
     /// what the average user should expect to see when exchanging to and from.
-    ConvertToAssets {
-        shares: Uint128,
-    },
+    #[returns(AssetsResponse)]
+    ConvertToAssets { shares: Uint128 },
 
+    /// TODO: How to handle return derive? We must supply a type here, but we
+    /// don't know it.
+    #[returns(Empty)]
     VaultExtension(T),
 }
 
 /// Contains QueryMsgs of all enabled extensions. To enable extensions defined
 /// outside of this create, you can define your own `ExtensionQueryMsg` type
 /// in your contract crate and pass it in as the generic parameter to QueryMsg
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum ExtensionQueryMsg {
     #[cfg(feature = "keeper")]
     Keeper(KeeperQueryMsg),
@@ -232,7 +230,7 @@ pub enum ExtensionQueryMsg {
 /// This struct should be stored as an Item under the `vault_standard_info` key,
 /// so that other contracts can do a RawQuery and read it directly from storage
 /// instead of needing to do a costly SmartQuery.
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct VaultStandardInfo {
     /// The version of the vault standard used. A number, e.g. 1, 2, etc.
     pub version: u16,
@@ -241,17 +239,11 @@ pub struct VaultStandardInfo {
     pub extensions: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct AssetsResponse {
     pub coins: Vec<Coin>,
     #[cfg(feature = "cw20")]
     pub cw20s: Vec<Cw20Coin>,
-}
-
-impl From<Vec<Coin>> for AssetsResponse {
-    fn from(coins: Vec<Coin>) -> Self {
-        Self { coins }
-    }
 }
 
 #[cfg(feature = "cw20")]
@@ -281,7 +273,7 @@ impl TryFrom<Vec<Asset>> for AssetsResponse {
 }
 
 /// Returned by QueryMsg::Info and contains information about this vault
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct VaultInfo {
     /// Coins required to enter vault.
     /// Amount will be proportional to the share of which it should occupy in the group

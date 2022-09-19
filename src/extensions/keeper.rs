@@ -1,8 +1,7 @@
+use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Addr;
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct KeeperJob {
     //The numeric ID of the job
     pub id: u64,
@@ -12,8 +11,7 @@ pub struct KeeperJob {
     pub whitelisted_keepers: Vec<Addr>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum KeeperExecuteMsg {
     /// Callable by vault admin to whitelist a keeper to be able to execute a job
     WhitelistKeeper { job_id: u64, keeper: String },
@@ -25,13 +23,16 @@ pub enum KeeperExecuteMsg {
     ExecuteJob { job_id: u64 },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
+#[derive(QueryResponses)]
 pub enum KeeperQueryMsg {
     /// Returns Vec<KeeperJob>
+    #[returns(Vec<KeeperJob>)]
     KeeperJobs,
     /// Returns Vec<Addr>
+    #[returns(Vec<Addr>)]
     WhitelistedKeepers { job_id: u64 },
     /// Returns bool, whether the keeper job can be executed or not
+    #[returns(bool)]
     KeeperJobReady { job_id: u64 },
 }

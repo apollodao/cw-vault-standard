@@ -1,10 +1,8 @@
+use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::{Addr, Uint128};
-use cw_utils::Expiration;
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use cw_utils::{Duration, Expiration};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum LockupExecuteMsg {
     /// Withdraw an unlocking position that has finished unlocking.
     WithdrawUnlocked {
@@ -41,11 +39,12 @@ pub enum LockupExecuteMsg {
     ForceWithdraw { receiver: Option<String> },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
+#[derive(QueryResponses)]
 pub enum LockupQueryMsg {
     /// Returns a `Vec<Lockup>` containing all the currently unclaimed lockup
     /// positions for the `owner`.
+    #[returns(Vec<Lockup>)]
     Lockups {
         /// The address of the owner of the lockup
         owner: String,
@@ -56,14 +55,16 @@ pub enum LockupQueryMsg {
     },
 
     /// Returns `Lockup` info about a specific lockup, by owner and ID.
+    #[returns(Lockup)]
     Lockup { owner: String, lockup_id: u64 },
 
     /// Returns `cw_utils::Duration` duration of the lockup.
+    #[returns(Duration)]
     LockupDuration,
 }
 
 /// Info about a currenly unlocking position.
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct Lockup {
     pub owner: Addr,
     pub id: u64,
