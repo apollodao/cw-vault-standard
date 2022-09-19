@@ -123,7 +123,7 @@ pub enum QueryMsg<T = ExtensionQueryMsg> {
     #[returns(AssetsResponse)]
     PreviewMint { shares: Uint128 },
 
-    /// Returns `AssetsResponse` representing all the assets that would be redeemed for in exchange for
+    /// Returns `AssetsResponse` representing all the assets that would be redeemed in exchange for
     /// vault tokens. Used by Rover to calculate vault position values.
     #[returns(AssetsResponse)]
     PreviewRedeem { shares: Uint128 },
