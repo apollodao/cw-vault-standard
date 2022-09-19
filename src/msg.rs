@@ -15,6 +15,7 @@ use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::{Binary, Decimal, Uint128};
 use cosmwasm_std::{Coin, Empty};
+use schemars::JsonSchema;
 
 #[cw_serde]
 pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
@@ -66,7 +67,10 @@ pub enum ExtensionExecuteMsg {
 
 #[cw_serde]
 #[derive(QueryResponses)]
-pub enum QueryMsg<T = ExtensionQueryMsg> {
+pub enum QueryMsg<T = ExtensionQueryMsg>
+where
+    T: JsonSchema,
+{
     /// Returns `VaultStandardInfo` with information on the version of the vault
     /// standard used as well as any enabled extensions.
     #[returns(VaultStandardInfo)]
@@ -244,6 +248,12 @@ pub struct AssetsResponse {
     pub coins: Vec<Coin>,
     #[cfg(feature = "cw20")]
     pub cw20s: Vec<Cw20Coin>,
+}
+
+impl From<Vec<Coin>> for AssetsResponse {
+    fn from(coins: Vec<Coin>) -> Self {
+        Self { coins }
+    }
 }
 
 #[cfg(feature = "cw20")]
