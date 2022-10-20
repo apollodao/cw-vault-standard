@@ -1,8 +1,10 @@
+use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{Binary, Empty, Uint128};
 use cw20::{Cw20Coin, Expiration, Logo};
 
 use crate::msg::ExtensionExecuteMsg;
 
+#[cw_serde]
 pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     //--------------------------------------------------------------------------------------------------
     // Standard CW20 ExecuteMsgs
