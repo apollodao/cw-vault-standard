@@ -23,28 +23,29 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     /// parameter.
     Deposit {
         /// With the cw20 feature, it is allowed to deposit CW20 tokens. These
-        /// must be passed in with the cw20_assets and have allowance pre-approved.
+        /// must be passed in with to the `cw20s` argument and have allowance
+        /// pre-approved.
         #[cfg(feature = "cw20")]
-        cw20_assets: Option<Vec<Cw20Coin>>,
+        cw20s: Option<Vec<Cw20Coin>>,
         /// The optional receiver of the vault token. If not set, the caller
         /// address will be used instead.
         receiver: Option<String>,
     },
 
-    /// Called to withdraw from the vault. The native vault token must be passed
-    /// in the funds parameter, unless the lockup extension is called, in which
-    /// case the vault token has already been passed to ExecuteMsg::Unlock
-    Withdraw {
+    /// Called to redeem vault tokens and receive assets back from the vault.
+    /// The native vault token must be passed in the funds parameter, unless the
+    /// lockup extension is called, in which case the vault token has already
+    /// been passed to ExecuteMsg::Unlock.
+    Redeem {
         /// An optional field containing which address should receive the
         /// withdrawn underlying assets.
         receiver: Option<String>,
-        // An optional field containing a binary encoded CosmosMsg. If set, the
-        // vault will return the underlying assets to receiver and assume that
-        // receiver is a contract and try to execute the binary encoded
-        // ExecuteMsg on the contract.
-        //
-        // TODO: Keep this? Figure out best Receiver API.
-        // contract_msg: Option<Binary>,
+        /// The amount of vault tokens sent to the contract. In the case that
+        /// the vault token is a Cosmos native denom, we of course have this
+        /// information in the info.funds, but if the vault implements the Cw4626
+        /// API, then we need this argument. We figured it's better to have one
+        /// API for both types of vaults, so we require this argument.
+        amount: Uint128,
     },
 
     /// Custom callback functions defined by the vault.
@@ -105,30 +106,9 @@ where
         cw20s: Vec<Cw20Coin>,
     },
 
-    /// Returns `Uint128` vault tokens needed to withdraw the passed in assets.
-    ///
-    /// TODO: Keep this? See discussion above. If removed PreviewRedeem could be
-    /// renamed to PreviewWithdraw.
-    #[returns(Uint128)]
-    PreviewWithdraw {
-        coins: Vec<Coin>,
-        #[cfg(feature = "cw20")]
-        cw20s: Vec<Cw20Coin>,
-    },
-
-    /// Returns `AssetsResponse` assets needed to mint `shares` number of
-    /// vault tokens.
-    ///
-    /// TODO: Keep this? Could maybe be useful, but we have no Mint ExecuteMsg
-    /// since we are using native vault tokens. If callbacks are added to TokenFactory and
-    /// the MintMsg on TokenFactory is openened up, anyone could potentially send a MsgMint on
-    /// to the TokenFactory, but how would the assets be passed to the contract? Could they
-    /// be passed to the TokenFactory and be forwarded to the vault's callback?
-    #[returns(AssetsResponse)]
-    PreviewMint { shares: Uint128 },
-
-    /// Returns `AssetsResponse` representing all the assets that would be redeemed in exchange for
-    /// vault tokens. Used by Rover to calculate vault position values.
+    /// Returns `AssetsResponse` representing all the assets that would be
+    /// redeemed in exchange for vault tokens. Used by Rover to calculate vault
+    /// position values.
     #[returns(AssetsResponse)]
     PreviewRedeem { shares: Uint128 },
 
@@ -145,28 +125,6 @@ where
     /// are entirely disabled (even temporarily) it MUST return 0.
     #[returns(Option<AssetsResponse>)]
     MaxDeposit { receiver: String },
-
-    /// Returns `Option<Uint128>` maximum amount of vault shares that can be minted upon
-    /// a Deposit call.
-    ///
-    /// TODO: Keep this? We don't have a Mint function. Could be combined with
-    /// MaxDeposit to return a struct containing both.
-    #[returns(Option<Uint128>)]
-    MaxMint { receiver: String },
-
-    /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
-    /// withdrawn from the owner balance in the Vault, through a withdraw call.
-    ///
-    /// MUST return the maximum amount of assets that could be transferred from
-    /// owner through withdraw and not cause a revert, which MUST NOT be higher
-    /// than the actual maximum that would be accepted (it should underestimate
-    /// if necessary). This assumes that the user has infinite vault shares, i.e.
-    /// MUST NOT rely on the vault token balances of `owner`.
-    ///
-    /// MUST factor in both global and user-specific limits, like if withdrawals
-    /// are entirely disabled (even temporarily) it MUST return 0.
-    #[returns(Option<AssetsResponse>)]
-    MaxWithdraw { owner: String },
 
     /// Returns `Option<Uint128>` maximum amount of Vault shares that can be redeemed
     /// from the owner balance in the Vault, through a call to Withdraw
