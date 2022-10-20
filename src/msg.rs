@@ -208,6 +208,7 @@ pub struct AssetsResponse {
     pub cw20s: Vec<Cw20Coin>,
 }
 
+#[cfg(not(feature = "cw20"))]
 impl From<Vec<Coin>> for AssetsResponse {
     fn from(coins: Vec<Coin>) -> Self {
         Self { coins }

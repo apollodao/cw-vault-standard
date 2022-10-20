@@ -2,6 +2,9 @@ use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::{Addr, Coin, Uint128};
 use cw_utils::{Duration, Expiration};
 
+#[cfg(feature = "cw20")]
+use cw20::Cw20Coin;
+
 #[cw_serde]
 pub enum LockupExecuteMsg {
     /// Withdraw an unlocking position that has finished unlocking.
