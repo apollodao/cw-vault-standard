@@ -7,6 +7,17 @@ use cw20::Cw20Coin;
 
 #[cw_serde]
 pub enum LockupExecuteMsg {
+    /// Unlock is called to initiate unlocking a locked position held by the
+    /// vault.
+    /// The caller must pass the native vault tokens in the funds field.
+    /// Emits an Unlock event with `amount` attribute containing an u64 lockup_id.
+    /// Also encodes the u64 lockup ID as binary and returns it in the Response's
+    /// data field, so that it can be read by SubMsg replies.
+    ///
+    /// Like Redeem, this takes an amount so that the same API can be used for
+    /// CW4626 and native tokens.
+    Unlock { amount: Uint128 },
+
     /// Withdraw an unlocking position that has finished unlocking.
     WithdrawUnlocked {
         /// An optional field containing which address should receive the
@@ -19,17 +30,6 @@ pub enum LockupExecuteMsg {
         lockup_id: Option<u64>,
     },
 
-    /// Unlock is called to initiate unlocking a locked position held by the
-    /// vault.
-    /// The caller must pass the native vault tokens in the funds field.
-    /// Emits an Unlock event with `amount` attribute containing an u64 lockup_id.
-    /// Also encodes the u64 lockup ID as binary and returns it in the Response's
-    /// data field, so that it can be read by SubMsg replies.
-    ///
-    /// Like Redeem, this takes an amount so that the same API can be used for
-    /// CW4626 and native tokens.
-    Unlock { amount: Uint128 },
-
     /// Can be called by whitelisted addresses to bypass the lockup and
     /// immediately return the underlying assets. Used in the event of
     /// liquidation. The caller must pass the native vault tokens in the funds
@@ -37,6 +37,8 @@ pub enum LockupExecuteMsg {
     ForceWithdraw {
         /// The address which should receive the withdrawn assets.
         recipient: Option<String>,
+        /// The amount of vault tokens to force unlock.
+        amount: Uint128,
     },
 
     /// Force withdraw from a position that is already unlocking (Unlock has
