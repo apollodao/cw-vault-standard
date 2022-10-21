@@ -13,7 +13,7 @@ use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Binary, Decimal, Uint128};
+use cosmwasm_std::Uint128;
 use cosmwasm_std::{Coin, Empty};
 use schemars::JsonSchema;
 
@@ -27,9 +27,9 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
         /// pre-approved.
         #[cfg(feature = "cw20")]
         cw20s: Option<Vec<Cw20Coin>>,
-        /// The optional receiver of the vault token. If not set, the caller
+        /// The optional recipient of the vault token. If not set, the caller
         /// address will be used instead.
-        receiver: Option<String>,
+        recipient: Option<String>,
     },
 
     /// Called to redeem vault tokens and receive assets back from the vault.
@@ -39,7 +39,7 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     Redeem {
         /// An optional field containing which address should receive the
         /// withdrawn underlying assets.
-        receiver: Option<String>,
+        recipient: Option<String>,
         /// The amount of vault tokens sent to the contract. In the case that
         /// the vault token is a Cosmos native denom, we of course have this
         /// information in the info.funds, but if the vault implements the Cw4626
@@ -113,18 +113,18 @@ where
     PreviewRedeem { shares: Uint128 },
 
     /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
-    /// deposited into the Vault for the `receiver`, through a call to Deposit.
+    /// deposited into the Vault for the `recipient`, through a call to Deposit.
     ///
     /// MUST return the maximum amount of assets deposit would allow to be
-    /// deposited for `receiver` and not cause a revert, which MUST NOT be higher
+    /// deposited for `recipient` and not cause a revert, which MUST NOT be higher
     /// than the actual maximum that would be accepted (it should underestimate
     /// if necessary). This assumes that the user has infinite assets, i.e.
-    /// MUST NOT rely on the asset balances of `receiver`.
+    /// MUST NOT rely on the asset balances of `recipient`.
     ///
     /// MUST factor in both global and user-specific limits, like if deposits
     /// are entirely disabled (even temporarily) it MUST return 0.
     #[returns(Option<AssetsResponse>)]
-    MaxDeposit { receiver: String },
+    MaxDeposit { recipient: String },
 
     /// Returns `Option<Uint128>` maximum amount of Vault shares that can be redeemed
     /// from the owner balance in the Vault, through a call to Withdraw
@@ -252,28 +252,4 @@ pub struct VaultInfo {
     pub deposit_cw20s: Vec<Cw20Coin>,
     /// Denom of vault token
     pub vault_token_denom: String,
-}
-
-pub struct VaultReceiveMsg {
-    pub sender: String,
-    pub amount: Uint128,
-    pub msg: Binary,
-}
-
-/// Zapper that does not need to know Vault API
-pub enum GeneralizedZapperExecuteMsg {
-    Zap {
-        /// If cw20 assets are sent, they must be listed here and have pre-approved
-        /// allowance set.
-        assets: Option<Vec<Coin>>,
-        /// The asset the caller wishes to receive
-        receive_asset: String,
-        /// The recipient of the converted assets
-        recipient: String,
-        /// If set will try to call the binary encoded ExecuteMsg on recipient
-        contract_msg: Option<Binary>,
-        /// The slippage tolerance to use when converting. The zapper will use
-        /// some internal oracle to value the input and output assets.
-        slippage_tolerance: Option<Decimal>,
-    },
 }
