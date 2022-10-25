@@ -9,6 +9,7 @@ default = []
 lockup = ["cw-utils"]
 keeper = []
 cw20 = ["dep:cw20", "dep:cw-asset"]
+cw4626 = ["cw20"]
 
 [dependencies]
 cosmwasm-std = "1.1.0"

@@ -2,35 +2,33 @@ use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::{Addr, Coin, Uint128};
 use cw_utils::{Duration, Expiration};
 
+#[cfg(feature = "cw20")]
+use cw20::Cw20Coin;
+
 #[cw_serde]
 pub enum LockupExecuteMsg {
-    /// Withdraw an unlocking position that has finished unlocking.
-    WithdrawUnlocked {
-        /// An optional field containing which address should receive the
-        /// withdrawn underlying assets.
-        receiver: Option<String>,
-        // An optional field containing a binary encoded CosmosMsg. If set, the
-        // vault will return the underlying assets to receiver and assume that
-        // receiver is a contract and try to execute the binary encoded
-        // ExecuteMsg on the contract.
-        //
-        // TODO: Keep this? Figure out best Receiver API.
-        // contract_msg: Option<Binary>,
-        //
-        /// The ID of the expired lockup to withdraw from.
-        /// If None is passed, the vault will attempt to withdraw all expired
-        /// lockup positions. Note that this can fail if there are too many
-        /// lockup positions and the `max_contract_gas` limit is hit.
-        lockup_id: Option<u64>,
-    },
-
     /// Unlock is called to initiate unlocking a locked position held by the
     /// vault.
     /// The caller must pass the native vault tokens in the funds field.
     /// Emits an Unlock event with `amount` attribute containing an u64 lockup_id.
     /// Also encodes the u64 lockup ID as binary and returns it in the Response's
     /// data field, so that it can be read by SubMsg replies.
-    Unlock,
+    ///
+    /// Like Redeem, this takes an amount so that the same API can be used for
+    /// CW4626 and native tokens.
+    Unlock { amount: Uint128 },
+
+    /// Withdraw an unlocking position that has finished unlocking.
+    WithdrawUnlocked {
+        /// An optional field containing which address should receive the
+        /// withdrawn underlying assets.
+        recipient: Option<String>,
+        /// The ID of the expired lockup to withdraw from.
+        /// If None is passed, the vault will attempt to withdraw all expired
+        /// lockup positions. Note that this can fail if there are too many
+        /// lockup positions and the `max_contract_gas` limit is hit.
+        lockup_id: Option<u64>,
+    },
 
     /// Can be called by whitelisted addresses to bypass the lockup and
     /// immediately return the underlying assets. Used in the event of
@@ -39,6 +37,8 @@ pub enum LockupExecuteMsg {
     ForceWithdraw {
         /// The address which should receive the withdrawn assets.
         recipient: Option<String>,
+        /// The amount of vault tokens to force unlock.
+        amount: Uint128,
     },
 
     /// Force withdraw from a position that is already unlocking (Unlock has
