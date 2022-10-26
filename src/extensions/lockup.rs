@@ -27,7 +27,7 @@ pub enum LockupExecuteMsg {
         /// If None is passed, the vault will attempt to withdraw all expired
         /// lockup positions. Note that this can fail if there are too many
         /// lockup positions and the `max_contract_gas` limit is hit.
-        lockup_id: Option<u64>,
+        lockup_id: u64,
     },
 
     /// Can be called by whitelisted addresses to bypass the lockup and
