@@ -53,8 +53,6 @@ pub enum LockupExecuteMsg {
     /// Force withdraw from a position that is already unlocking (Unlock has
     /// already been called).
     ForceWithdrawUnlocking {
-        /// The address of the owner of the position.
-        owner: String,
         /// The ID of the unlocking position from which to force withdraw
         lockup_id: u64,
         /// Optional amounts of each underlying asset to be force withdrawn.
