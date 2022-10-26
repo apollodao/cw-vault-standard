@@ -18,7 +18,7 @@ use cosmwasm_std::{Coin, Empty};
 use schemars::JsonSchema;
 
 #[cw_serde]
-pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
+pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
@@ -47,9 +47,6 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
         /// API for both types of vaults, so we require this argument.
         amount: Uint128,
     },
-
-    /// Custom callback functions defined by the vault.
-    Callback(S),
 
     /// Support for custom extensions
     VaultExtension(T),
