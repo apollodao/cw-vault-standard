@@ -70,10 +70,14 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     //--------------------------------------------------------------------------------------------------
     Deposit {
         cw20s: Option<Vec<Cw20Coin>>,
+        /// An optional field containing the recipient of the vault token. If not set, the
+        /// caller address will be used instead.
         recipient: Option<String>,
     },
 
     Redeem {
+        /// An optional field containing which address should receive the withdrawn underlying assets.
+        /// If not set, the caller address will be used instead.
         recipient: Option<String>,
         amount: Uint128,
     },

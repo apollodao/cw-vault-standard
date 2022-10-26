@@ -28,7 +28,8 @@ pub enum LockupExecuteMsg {
     /// Withdraw an unlocking position that has finished unlocking.
     WithdrawUnlocked {
         /// An optional field containing which address should receive the
-        /// withdrawn underlying assets.
+        /// withdrawn underlying assets. If not set, the caller address will be
+        /// used instead.
         recipient: Option<String>,
         /// The ID of the expired lockup to withdraw from.
         /// If None is passed, the vault will attempt to withdraw all expired
@@ -42,7 +43,8 @@ pub enum LockupExecuteMsg {
     /// liquidation. The caller must pass the native vault tokens in the funds
     /// field.
     ForceWithdraw {
-        /// The address which should receive the withdrawn assets.
+        /// The address which should receive the withdrawn assets. If not set,
+        /// the caller address will be used instead.
         recipient: Option<String>,
         /// The amount of vault tokens to force unlock.
         amount: Uint128,

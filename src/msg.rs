@@ -38,7 +38,8 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
     /// been passed to ExecuteMsg::Unlock.
     Redeem {
         /// An optional field containing which address should receive the
-        /// withdrawn underlying assets.
+        /// withdrawn underlying assets. If not set, the caller address will be
+        /// used instead.
         recipient: Option<String>,
         /// The amount of vault tokens sent to the contract. In the case that
         /// the vault token is a Cosmos native denom, we of course have this
