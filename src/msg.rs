@@ -139,6 +139,10 @@ where
     #[returns(AssetsResponse)]
     TotalAssets {},
 
+    /// Returns `Uint128` total amount of vault tokens in circulation.
+    #[returns(Uint128)]
+    TotalVaultTokenSupply {},
+
     /// The amount of shares that the vault would exchange for the amount of
     /// assets provided, in an ideal scenario where all the conditions are met.
     ///
