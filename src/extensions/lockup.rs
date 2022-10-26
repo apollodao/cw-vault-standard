@@ -5,12 +5,19 @@ use cw_utils::{Duration, Expiration};
 #[cfg(feature = "cw20")]
 use cw20::Cw20Coin;
 
+/// Type for the unlocking position created event emitted on call to `Unlock`.
+pub const UNLOCKING_POSITION_CREATED_EVENT_TYPE: &str = "unlocking_position_created";
+/// Key for the lockup id attribute in the "unlocking position created" event that
+/// is emitted on call to `Unlock`.
+pub const UNLOCKING_POSITION_ATTR_KEY: &str = "lockup_id";
+
 #[cw_serde]
 pub enum LockupExecuteMsg {
     /// Unlock is called to initiate unlocking a locked position held by the
     /// vault.
     /// The caller must pass the native vault tokens in the funds field.
-    /// Emits an Unlock event with `amount` attribute containing an u64 lockup_id.
+    /// Emits an event with type `UNLOCK_EVENT_TYPE` with an attribute with key
+    /// `UNLOCKING_POSITION_ATTR_KEY` containing an u64 lockup_id.
     /// Also encodes the u64 lockup ID as binary and returns it in the Response's
     /// data field, so that it can be read by SubMsg replies.
     ///
