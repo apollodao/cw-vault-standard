@@ -75,12 +75,12 @@ where
     /// Returns `VaultStandardInfo` with information on the version of the vault
     /// standard used as well as any enabled extensions.
     #[returns(VaultStandardInfo)]
-    VaultStandardInfo,
+    VaultStandardInfo {},
 
     /// Returns `VaultInfo` representing vault requirements, lockup, & vault
     /// token denom.
     #[returns(VaultInfo)]
-    Info,
+    Info {},
 
     /// Returns `Uint128` amount of vault tokens that will be returned for the
     /// passed in assets.
@@ -140,7 +140,7 @@ where
     /// Useful for display purposes, and does not have to confer the exact
     /// amount of underlying assets.
     #[returns(AssetsResponse)]
-    TotalAssets,
+    TotalAssets {},
 
     /// The amount of shares that the vault would exchange for the amount of
     /// assets provided, in an ideal scenario where all the conditions are met.
