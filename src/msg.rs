@@ -107,7 +107,7 @@ where
     /// redeemed in exchange for vault tokens. Used by Rover to calculate vault
     /// position values.
     #[returns(AssetsResponse)]
-    PreviewRedeem { shares: Uint128 },
+    PreviewRedeem { amount: Uint128 },
 
     /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
     /// deposited into the Vault for the `recipient`, through a call to Deposit.
