@@ -59,7 +59,7 @@ pub enum LockupExecuteMsg {
         /// If None is passed, the entire position will be force withdrawn.
         /// Vaults MAY require the ratio of assets to be the same as the ratio
         /// in the `deposit_assets` field returned by the `VaultInfo` query.
-        amounts: Option<Vec<Coin>>,
+        amount: Option<Uint128>,
         #[cfg(feature = "cw20")]
         cw20s_amounts: Option<Vec<Cw20Coin>>,
         /// The address which should receive the withdrawn assets. If not set,
