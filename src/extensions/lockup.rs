@@ -85,7 +85,7 @@ pub enum LockupQueryMsg {
 
     /// Returns `Lockup` info about a specific lockup, by owner and ID.
     #[returns(Lockup)]
-    Lockup { owner: String, lockup_id: u64 },
+    Lockup { lockup_id: u64 },
 
     /// Returns `cw_utils::Duration` duration of the lockup.
     #[returns(Duration)]
