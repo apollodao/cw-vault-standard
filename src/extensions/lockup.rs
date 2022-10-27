@@ -33,9 +33,6 @@ pub enum LockupExecuteMsg {
         /// used instead.
         recipient: Option<String>,
         /// The ID of the expired lockup to withdraw from.
-        /// If None is passed, the vault will attempt to withdraw all expired
-        /// lockup positions. Note that this can fail if there are too many
-        /// lockup positions and the `max_contract_gas` limit is hit.
         lockup_id: u64,
     },
 
