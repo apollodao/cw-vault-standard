@@ -16,6 +16,8 @@ use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Uint128;
 use cosmwasm_std::{Coin, Empty};
 use schemars::JsonSchema;
+use std::fmt::{Display, Formatter};
+use convert_case::{Case, Casing};
 
 #[cw_serde]
 pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
@@ -200,7 +202,23 @@ pub struct VaultStandardInfo {
     pub version: u16,
     /// A list of vault standard extensions used by the vault.
     /// E.g. ["cw20", "lockup", "keeper"]
-    pub extensions: Vec<String>,
+    pub extensions: Vec<VaultExtension>,
+}
+
+#[cw_serde]
+pub enum VaultExtension {
+    Keeper,
+    Lockup,
+    Custom(String),
+}
+
+impl Display for VaultExtension {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            VaultExtension::Custom(name) => write!(f, "{}", name.to_case(Case::Snake)),
+            _ => write!(f, "{}", format!("{:?}", self).to_case(Case::Snake)),
+        }
+    }
 }
 
 #[cw_serde]
@@ -254,4 +272,19 @@ pub struct VaultInfo {
     pub deposit_cw20s: Vec<Cw20Coin>,
     /// Denom of vault token
     pub vault_token_denom: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use std::iter::zip;
+    use crate::msg::VaultExtension;
+
+    #[test]
+    fn test_extensions() {
+        let exts = vec![VaultExtension::Lockup, VaultExtension::Keeper, VaultExtension::Custom("HelloWorld".to_string())];
+        let expected = vec!["lockup", "keeper", "hello_world"];
+        for (ext, expected) in zip(exts, expected) {
+            assert_eq!(&ext.to_string(), expected);
+        }
+    }
 }
