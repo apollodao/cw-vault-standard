@@ -2,9 +2,6 @@ use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::{Addr, Uint128};
 use cw_utils::{Duration, Expiration};
 
-#[cfg(feature = "cw20")]
-use cw20::Cw20Coin;
-
 /// Type for the unlocking position created event emitted on call to `Unlock`.
 pub const UNLOCKING_POSITION_CREATED_EVENT_TYPE: &str = "unlocking_position_created";
 /// Key for the lockup id attribute in the "unlocking position created" event that
