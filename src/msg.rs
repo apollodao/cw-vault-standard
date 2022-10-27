@@ -94,30 +94,6 @@ where
     #[returns(Uint128)]
     PreviewRedeem { amount: Uint128 },
 
-    /// Returns `Option<Uint128>`, the maximum amount of base tokens that can be
-    /// deposited into the Vault for the `recipient`, through a call to Deposit.
-    ///
-    /// MUST return the maximum amount of base tokens that deposit would
-    /// allow to be deposited for `recipient` and not cause a revert, which MUST NOT be higher
-    /// than the actual maximum that would be accepted (it should underestimate
-    /// if necessary). This assumes that the user has infinite assets, i.e.
-    /// MUST NOT rely on the asset balances of `recipient`.
-    ///
-    /// MUST factor in both global and user-specific limits, like if deposits
-    /// are entirely disabled (even temporarily) it MUST return 0.
-    #[returns(Option<Uint128>)]
-    MaxDeposit { recipient: String },
-
-    /// Returns `Option<Uint128>` maximum amount of Vault shares that can be redeemed
-    /// from the owner balance in the Vault, through a call to Withdraw
-    ///
-    /// TODO: Keep this? Could potentially be combined with MaxWithdraw to return
-    /// a MaxWithdrawResponse type that includes both max assets that can be
-    /// withdrawn as well as max vault shares that can be withdrawn in exchange
-    /// for assets.
-    #[returns(Option<Uint128>)]
-    MaxRedeem { owner: String },
-
     /// Returns the amount of assets managed by the vault denominated in base tokens.
     /// Useful for display purposes, and does not have to confer the exact
     /// amount of base tokens.
