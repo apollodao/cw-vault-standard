@@ -53,13 +53,9 @@ pub enum LockupExecuteMsg {
     ForceWithdrawUnlocking {
         /// The ID of the unlocking position from which to force withdraw
         lockup_id: u64,
-        /// Optional amounts of each underlying asset to be force withdrawn.
+        /// Optional amount of the underlying asset to be force withdrawn.
         /// If None is passed, the entire position will be force withdrawn.
-        /// Vaults MAY require the ratio of assets to be the same as the ratio
-        /// in the `deposit_assets` field returned by the `VaultInfo` query.
         amount: Option<Uint128>,
-        #[cfg(feature = "cw20")]
-        cw20s_amounts: Option<Vec<Cw20Coin>>,
         /// The address which should receive the withdrawn assets. If not set,
         /// the assets will be sent to the caller.
         recipient: Option<String>,
