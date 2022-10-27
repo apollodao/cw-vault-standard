@@ -18,7 +18,7 @@ use cosmwasm_std::{Coin, Empty};
 use schemars::JsonSchema;
 
 #[cw_serde]
-pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
+pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
@@ -38,7 +38,8 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     /// been passed to ExecuteMsg::Unlock.
     Redeem {
         /// An optional field containing which address should receive the
-        /// withdrawn underlying assets.
+        /// withdrawn underlying assets. If not set, the caller address will be
+        /// used instead.
         recipient: Option<String>,
         /// The amount of vault tokens sent to the contract. In the case that
         /// the vault token is a Cosmos native denom, we of course have this
@@ -47,9 +48,6 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
         /// API for both types of vaults, so we require this argument.
         amount: Uint128,
     },
-
-    /// Custom callback functions defined by the vault.
-    Callback(S),
 
     /// Support for custom extensions
     VaultExtension(T),
@@ -75,12 +73,12 @@ where
     /// Returns `VaultStandardInfo` with information on the version of the vault
     /// standard used as well as any enabled extensions.
     #[returns(VaultStandardInfo)]
-    VaultStandardInfo,
+    VaultStandardInfo {},
 
     /// Returns `VaultInfo` representing vault requirements, lockup, & vault
     /// token denom.
     #[returns(VaultInfo)]
-    Info,
+    Info {},
 
     /// Returns `Uint128` amount of vault tokens that will be returned for the
     /// passed in assets.
@@ -110,7 +108,7 @@ where
     /// redeemed in exchange for vault tokens. Used by Rover to calculate vault
     /// position values.
     #[returns(AssetsResponse)]
-    PreviewRedeem { shares: Uint128 },
+    PreviewRedeem { amount: Uint128 },
 
     /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
     /// deposited into the Vault for the `recipient`, through a call to Deposit.
@@ -140,7 +138,11 @@ where
     /// Useful for display purposes, and does not have to confer the exact
     /// amount of underlying assets.
     #[returns(AssetsResponse)]
-    TotalAssets,
+    TotalAssets {},
+
+    /// Returns `Uint128` total amount of vault tokens in circulation.
+    #[returns(Uint128)]
+    TotalVaultTokenSupply {},
 
     /// The amount of shares that the vault would exchange for the amount of
     /// assets provided, in an ideal scenario where all the conditions are met.
