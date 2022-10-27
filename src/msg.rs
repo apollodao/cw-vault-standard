@@ -1,24 +1,21 @@
+use cosmwasm_schema::{cw_serde, QueryResponses};
+use cosmwasm_std::{Coin, Empty};
+use cosmwasm_std::Uint128;
+use schemars::JsonSchema;
+
 #[cfg(feature = "cw20")]
 use {
-    cosmwasm_std::{StdError, StdResult},
     cw20::Cw20Coin,
-    cw_asset::{Asset, AssetInfo},
     std::convert::TryFrom,
 };
 
+#[cfg(feature = "keeper")]
+use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 #[cfg(feature = "lockup")]
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
-#[cfg(feature = "keeper")]
-use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
-
-use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::Uint128;
-use cosmwasm_std::{Coin, Empty};
-use schemars::JsonSchema;
-
 #[cw_serde]
-pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
+pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
@@ -38,7 +35,8 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     /// been passed to ExecuteMsg::Unlock.
     Redeem {
         /// An optional field containing which address should receive the
-        /// withdrawn underlying assets.
+        /// withdrawn underlying assets. If not set, the caller address will be
+        /// used instead.
         recipient: Option<String>,
         /// The amount of vault tokens sent to the contract. In the case that
         /// the vault token is a Cosmos native denom, we of course have this
@@ -47,9 +45,6 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
         /// API for both types of vaults, so we require this argument.
         amount: Uint128,
     },
-
-    /// Custom callback functions defined by the vault.
-    Callback(S),
 
     /// Support for custom extensions
     VaultExtension(T),
@@ -69,18 +64,18 @@ pub enum ExtensionExecuteMsg {
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg<T = ExtensionQueryMsg>
-where
-    T: JsonSchema,
+    where
+        T: JsonSchema,
 {
     /// Returns `VaultStandardInfo` with information on the version of the vault
     /// standard used as well as any enabled extensions.
     #[returns(VaultStandardInfo)]
-    VaultStandardInfo,
+    VaultStandardInfo {},
 
     /// Returns `VaultInfo` representing vault requirements, lockup, & vault
     /// token denom.
     #[returns(VaultInfo)]
-    Info,
+    Info {},
 
     /// Returns `Uint128` amount of vault tokens that will be returned for the
     /// passed in assets.
@@ -110,7 +105,7 @@ where
     /// redeemed in exchange for vault tokens. Used by Rover to calculate vault
     /// position values.
     #[returns(AssetsResponse)]
-    PreviewRedeem { shares: Uint128 },
+    PreviewRedeem { amount: Uint128 },
 
     /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
     /// deposited into the Vault for the `recipient`, through a call to Deposit.
@@ -140,7 +135,11 @@ where
     /// Useful for display purposes, and does not have to confer the exact
     /// amount of underlying assets.
     #[returns(AssetsResponse)]
-    TotalAssets,
+    TotalAssets {},
+
+    /// Returns `Uint128` total amount of vault tokens in circulation.
+    #[returns(Uint128)]
+    TotalVaultTokenSupply {},
 
     /// The amount of shares that the vault would exchange for the amount of
     /// assets provided, in an ideal scenario where all the conditions are met.
@@ -203,53 +202,18 @@ pub struct VaultStandardInfo {
 
 #[cw_serde]
 pub struct AssetsResponse {
-    pub coins: Vec<Coin>,
+    pub coin: Coin,
     #[cfg(feature = "cw20")]
-    pub cw20s: Vec<Cw20Coin>,
+    pub cw20: Cw20Coin,
 }
 
-#[cfg(not(feature = "cw20"))]
-impl From<Vec<Coin>> for AssetsResponse {
-    fn from(coins: Vec<Coin>) -> Self {
-        Self { coins }
-    }
-}
-
-#[cfg(feature = "cw20")]
-impl TryFrom<Vec<Asset>> for AssetsResponse {
-    type Error = StdError;
-
-    fn try_from(assets: Vec<Asset>) -> StdResult<Self> {
-        let mut coins = vec![];
-        let mut cw20s = vec![];
-
-        for asset in assets {
-            match &asset.info {
-                AssetInfo::Native(token) => coins.push(Coin {
-                    denom: token.to_string(),
-                    amount: asset.amount,
-                }),
-                AssetInfo::Cw20(addr) => cw20s.push(Cw20Coin {
-                    address: addr.to_string(),
-                    amount: asset.amount,
-                }),
-                _ => return Err(StdError::generic_err("unsupported asset type")),
-            }
-        }
-
-        Ok(AssetsResponse { coins, cw20s })
-    }
-}
 
 /// Returned by QueryMsg::Info and contains information about this vault
 #[cw_serde]
 pub struct VaultInfo {
-    /// Coins required to enter vault.
-    /// Amount will be proportional to the share of which it should occupy in the group
-    /// (e.g. { denom: osmo, amount: 1 }, { denom: atom, amount: 1 } indicate a 50-50 split)
-    pub deposit_coins: Vec<Coin>,
+    pub req_denom: String,
     #[cfg(feature = "cw20")]
-    pub deposit_cw20s: Vec<Cw20Coin>,
+    pub deposit_cw20: Cw20Coin,
     /// Denom of vault token
     pub vault_token_denom: String,
 }
