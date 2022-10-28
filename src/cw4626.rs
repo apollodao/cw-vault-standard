@@ -84,7 +84,5 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
         recipient: Option<String>,
     },
 
-    Callback(S),
-
     VaultExtension(T),
 }
