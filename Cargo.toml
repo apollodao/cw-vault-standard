@@ -8,7 +8,6 @@ authors = ["Sturdy <sturdy@apollo.farm>"]
 default = []
 lockup = ["cw-utils"]
 keeper = []
-cw20 = ["dep:cw20", "dep:cw-asset"]
 cw4626 = ["cw20"]
 
 [dependencies]
