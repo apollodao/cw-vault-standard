@@ -1,5 +1,5 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Addr, Coin, Uint128};
+use cosmwasm_std::{Addr, Uint128};
 use cw_utils::{Duration, Expiration};
 
 /// Type for the unlocking position created event emitted on call to `Unlock`.
@@ -13,8 +13,9 @@ pub enum LockupExecuteMsg {
     /// Unlock is called to initiate unlocking a locked position held by the
     /// vault.
     /// The caller must pass the native vault tokens in the funds field.
-    /// Emits an event with type `UNLOCK_EVENT_TYPE` with an attribute with key
-    /// `UNLOCKING_POSITION_ATTR_KEY` containing an u64 lockup_id.
+    /// Emits an event with type `UNLOCKING_POSITION_CREATED_EVENT_TYPE` with
+    /// an attribute with key `UNLOCKING_POSITION_ATTR_KEY` containing an u64
+    /// lockup_id.
     /// Also encodes the u64 lockup ID as binary and returns it in the Response's
     /// data field, so that it can be read by SubMsg replies.
     ///
@@ -29,9 +30,6 @@ pub enum LockupExecuteMsg {
         /// used instead.
         recipient: Option<String>,
         /// The ID of the expired lockup to withdraw from.
-        /// If None is passed, the vault will attempt to withdraw all expired
-        /// lockup positions. Note that this can fail if there are too many
-        /// lockup positions and the `max_contract_gas` limit is hit.
         lockup_id: u64,
     },
 }
