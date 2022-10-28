@@ -22,11 +22,8 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
-        /// With the cw20 feature, it is allowed to deposit CW20 tokens. These
-        /// must be passed in with to the `cw20s` argument and have allowance
-        /// pre-approved.
-        #[cfg(feature = "cw20")]
-        cw20s: Option<Vec<Cw20Coin>>,
+        /// The amount of the underlying asset to deposit.
+        amount: Uint128,
         /// The optional recipient of the vault token. If not set, the caller
         /// address will be used instead.
         recipient: Option<String>,
