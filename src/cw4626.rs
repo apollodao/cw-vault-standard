@@ -69,7 +69,7 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     // CW4626 ExecuteMsgs
     //--------------------------------------------------------------------------------------------------
     Deposit {
-        /// The amount of the underlying asset to deposit
+        /// The amount of base tokens to deposit
         amount: Uint128,
         /// An optional field containing the recipient of the vault token. If not set, the
         /// caller address will be used instead.
@@ -79,7 +79,7 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
     Redeem {
         /// Amount of vault tokens to redeem
         amount: Uint128,
-        /// An optional field containing which address should receive the withdrawn underlying assets.
+        /// An optional field containing which address should receive the withdrawn base tokens.
         /// If not set, the caller address will be used instead.
         recipient: Option<String>,
     },

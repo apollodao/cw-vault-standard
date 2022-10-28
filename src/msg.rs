@@ -14,7 +14,7 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
-        /// The amount of the underlying asset to deposit.
+        /// The amount of base tokens to deposit.
         amount: Uint128,
         /// The optional recipient of the vault token. If not set, the caller
         /// address will be used instead.
@@ -27,7 +27,7 @@ pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
     /// been passed to ExecuteMsg::Unlock.
     Redeem {
         /// An optional field containing which address should receive the
-        /// withdrawn underlying assets. If not set, the caller address will be
+        /// withdrawn base tokens. If not set, the caller address will be
         /// used instead.
         recipient: Option<String>,
         /// The amount of vault tokens sent to the contract. In the case that
@@ -89,15 +89,15 @@ where
     #[returns(Uint128)]
     PreviewDeposit { amount: Uint128 },
 
-    /// Returns the number of underlying assets that would be redeemed in exchange
+    /// Returns the number of base tokens that would be redeemed in exchange
     /// `amount` for vault tokens. Used by Rover to calculate vault position values.
     #[returns(Uint128)]
     PreviewRedeem { amount: Uint128 },
 
-    /// Returns `Option<Uint128>`, the maximum amount of the underlying assets that can be
+    /// Returns `Option<Uint128>`, the maximum amount of base tokens that can be
     /// deposited into the Vault for the `recipient`, through a call to Deposit.
     ///
-    /// MUST return the maximum amount of the underlying assets that deposit would
+    /// MUST return the maximum amount of base tokens that deposit would
     /// allow to be deposited for `recipient` and not cause a revert, which MUST NOT be higher
     /// than the actual maximum that would be accepted (it should underestimate
     /// if necessary). This assumes that the user has infinite assets, i.e.
@@ -118,11 +118,9 @@ where
     #[returns(Option<Uint128>)]
     MaxRedeem { owner: String },
 
-    /// Returns the amount of the underlying assets managed denominated in base tokens,
-    /// where the base token is the token returned as part of the `VaultInfo` when querying
-    /// `Info {}`.
+    /// Returns the amount of assets managed by the vault denominated in base tokens.
     /// Useful for display purposes, and does not have to confer the exact
-    /// amount of underlying assets.
+    /// amount of base tokens.
     #[returns(Uint128)]
     TotalAssets {},
 
@@ -141,7 +139,7 @@ where
     #[returns(Uint128)]
     ConvertToShares { amount: Uint128 },
 
-    /// Returns the amount of underlying assets that the Vault would exchange for
+    /// Returns the amount of base tokens that the Vault would exchange for
     /// the `amount` of shares provided, in an ideal scenario where all the
     /// conditions are met.
     ///
