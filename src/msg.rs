@@ -1,11 +1,3 @@
-#[cfg(feature = "cw20")]
-use {
-    cosmwasm_std::{StdError, StdResult},
-    cw20::Cw20Coin,
-    cw_asset::{Asset, AssetInfo},
-    std::convert::TryFrom,
-};
-
 #[cfg(feature = "lockup")]
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
@@ -13,8 +5,8 @@ use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::Uint128;
-use cosmwasm_std::{Coin, Empty};
+use cosmwasm_std::Empty;
+use cosmwasm_std::{Addr, Api, StdError, StdResult, Uint128};
 use schemars::JsonSchema;
 
 #[cw_serde]
@@ -95,30 +87,25 @@ where
     /// MUST be inclusive of deposit fees. Integrators should be aware of the
     /// existence of deposit fees.
     #[returns(Uint128)]
-    PreviewDeposit {
-        coins: Vec<Coin>,
-        #[cfg(feature = "cw20")]
-        cw20s: Vec<Cw20Coin>,
-    },
+    PreviewDeposit { amount: Uint128 },
 
-    /// Returns `AssetsResponse` representing all the assets that would be
-    /// redeemed in exchange for vault tokens. Used by Rover to calculate vault
-    /// position values.
-    #[returns(AssetsResponse)]
+    /// Returns the number of underlying assets that would be redeemed in exchange
+    /// `amount` for vault tokens. Used by Rover to calculate vault position values.
+    #[returns(Uint128)]
     PreviewRedeem { amount: Uint128 },
 
-    /// Returns `Option<AssetsResponse>` maximum amount of assets that can be
+    /// Returns `Option<Uint128>`, the maximum amount of the underlying assets that can be
     /// deposited into the Vault for the `recipient`, through a call to Deposit.
     ///
-    /// MUST return the maximum amount of assets deposit would allow to be
-    /// deposited for `recipient` and not cause a revert, which MUST NOT be higher
+    /// MUST return the maximum amount of the underlying assets that deposit would
+    /// allow to be deposited for `recipient` and not cause a revert, which MUST NOT be higher
     /// than the actual maximum that would be accepted (it should underestimate
     /// if necessary). This assumes that the user has infinite assets, i.e.
     /// MUST NOT rely on the asset balances of `recipient`.
     ///
     /// MUST factor in both global and user-specific limits, like if deposits
     /// are entirely disabled (even temporarily) it MUST return 0.
-    #[returns(Option<AssetsResponse>)]
+    #[returns(Option<Uint128>)]
     MaxDeposit { recipient: String },
 
     /// Returns `Option<Uint128>` maximum amount of Vault shares that can be redeemed
@@ -131,10 +118,10 @@ where
     #[returns(Option<Uint128>)]
     MaxRedeem { owner: String },
 
-    /// Returns `AssetsResponse` assets managed by vault.
+    /// Returns the amount of the underlying asset managed by vault as `Uint128`.
     /// Useful for display purposes, and does not have to confer the exact
     /// amount of underlying assets.
-    #[returns(AssetsResponse)]
+    #[returns(Uint128)]
     TotalAssets {},
 
     /// Returns `Uint128` total amount of vault tokens in circulation.
@@ -150,14 +137,10 @@ where
     /// instead should reflect the “average-user’s” price-per-share, meaning
     /// what the average user should expect to see when exchanging to and from.
     #[returns(Uint128)]
-    ConvertToShares {
-        coins: Vec<Coin>,
-        #[cfg(feature = "cw20")]
-        cw20s: Vec<Cw20Coin>,
-    },
+    ConvertToShares { amount: Uint128 },
 
-    /// Returns `AssetsResponse` assets that the Vault would exchange for
-    /// the amount of shares provided, in an ideal scenario where all the
+    /// Returns the amount of underlying assets that the Vault would exchange for
+    /// the `amount` of shares provided, in an ideal scenario where all the
     /// conditions are met.
     ///
     /// Useful for display purposes and does not have to confer the exact amount
@@ -165,8 +148,8 @@ where
     /// This calculation may not reflect the “per-user” price-per-share, and
     /// instead should reflect the “average-user’s” price-per-share, meaning
     /// what the average user should expect to see when exchanging to and from.
-    #[returns(AssetsResponse)]
-    ConvertToAssets { shares: Uint128 },
+    #[returns(Uint128)]
+    ConvertToAssets { amount: Uint128 },
 
     /// TODO: How to handle return derive? We must supply a type here, but we
     /// don't know it.
@@ -200,55 +183,40 @@ pub struct VaultStandardInfo {
     pub extensions: Vec<String>,
 }
 
-#[cw_serde]
-pub struct AssetsResponse {
-    pub coins: Vec<Coin>,
-    #[cfg(feature = "cw20")]
-    pub cw20s: Vec<Cw20Coin>,
-}
-
-#[cfg(not(feature = "cw20"))]
-impl From<Vec<Coin>> for AssetsResponse {
-    fn from(coins: Vec<Coin>) -> Self {
-        Self { coins }
-    }
-}
-
-#[cfg(feature = "cw20")]
-impl TryFrom<Vec<Asset>> for AssetsResponse {
-    type Error = StdError;
-
-    fn try_from(assets: Vec<Asset>) -> StdResult<Self> {
-        let mut coins = vec![];
-        let mut cw20s = vec![];
-
-        for asset in assets {
-            match &asset.info {
-                AssetInfo::Native(token) => coins.push(Coin {
-                    denom: token.to_string(),
-                    amount: asset.amount,
-                }),
-                AssetInfo::Cw20(addr) => cw20s.push(Cw20Coin {
-                    address: addr.to_string(),
-                    amount: asset.amount,
-                }),
-                _ => return Err(StdError::generic_err("unsupported asset type")),
-            }
-        }
-
-        Ok(AssetsResponse { coins, cw20s })
-    }
-}
-
 /// Returned by QueryMsg::Info and contains information about this vault
 #[cw_serde]
 pub struct VaultInfo {
     /// Coins required to enter vault.
     /// Amount will be proportional to the share of which it should occupy in the group
     /// (e.g. { denom: osmo, amount: 1 }, { denom: atom, amount: 1 } indicate a 50-50 split)
-    pub deposit_coins: Vec<Coin>,
-    #[cfg(feature = "cw20")]
-    pub deposit_cw20s: Vec<Cw20Coin>,
+    pub deposit_token: Token,
     /// Denom of vault token
-    pub vault_token_denom: String,
+    pub vault_token: Token,
+}
+
+#[cw_serde]
+pub enum Token {
+    Native(String),
+    Cw20(String),
+}
+
+impl Token {
+    pub fn to_addr(&self, api: &dyn Api) -> StdResult<Addr> {
+        match self {
+            Token::Native(denom) => Err(StdError::generic_err(format!(
+                "Native token {} cannot be converted to address",
+                denom
+            ))),
+            Token::Cw20(addr) => api.addr_validate(addr),
+        }
+    }
+
+    pub fn to_native(&self) -> StdResult<String> {
+        match self {
+            Token::Native(denom) => Ok(denom.clone()),
+            Token::Cw20(_) => Err(StdError::generic_err(
+                "Cw20 token cannot be converted to native token",
+            )),
+        }
+    }
 }
