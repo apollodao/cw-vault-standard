@@ -188,32 +188,32 @@ pub struct VaultStandardInfo {
 pub struct VaultInfo {
     /// The token that is accepted for deposits, withdrawals and used for accounting
     /// in the vault.
-    pub base_token: Token,
+    pub base_token: TokenInfo,
     /// Denom of vault token
-    pub vault_token: Token,
+    pub vault_token: TokenInfo,
 }
 
 #[cw_serde]
-pub enum Token {
+pub enum TokenInfo {
     Native(String),
     Cw20(String),
 }
 
-impl Token {
+impl TokenInfo {
     pub fn to_cw20_addr(&self, api: &dyn Api) -> StdResult<Addr> {
         match self {
-            Token::Native(denom) => Err(StdError::generic_err(format!(
+            TokenInfo::Native(denom) => Err(StdError::generic_err(format!(
                 "Native token {} cannot be converted to address",
                 denom
             ))),
-            Token::Cw20(addr) => api.addr_validate(addr),
+            TokenInfo::Cw20(addr) => api.addr_validate(addr),
         }
     }
 
     pub fn to_native_denom(&self) -> StdResult<String> {
         match self {
-            Token::Native(denom) => Ok(denom.clone()),
-            Token::Cw20(_) => Err(StdError::generic_err(
+            TokenInfo::Native(denom) => Ok(denom.clone()),
+            TokenInfo::Cw20(_) => Err(StdError::generic_err(
                 "Cw20 token cannot be converted to native token",
             )),
         }
