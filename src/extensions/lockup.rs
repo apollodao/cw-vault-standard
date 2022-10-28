@@ -55,7 +55,7 @@ pub enum LockupQueryMsg {
 
     /// Returns `cw_utils::Duration` duration of the lockup.
     #[returns(Duration)]
-    LockupDuration,
+    LockupDuration {},
 }
 
 /// Info about a currenly unlocking position.
@@ -64,5 +64,5 @@ pub struct Lockup {
     pub owner: Addr,
     pub id: u64,
     pub release_at: Expiration,
-    pub amount: Uint128,
+    pub base_token_amount: Uint128,
 }

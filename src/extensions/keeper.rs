@@ -28,7 +28,7 @@ pub enum KeeperExecuteMsg {
 pub enum KeeperQueryMsg {
     /// Returns Vec<KeeperJob>
     #[returns(Vec<KeeperJob>)]
-    KeeperJobs,
+    KeeperJobs {},
     /// Returns Vec<Addr>
     #[returns(Vec<Addr>)]
     WhitelistedKeepers { job_id: u64 },
