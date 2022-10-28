@@ -118,7 +118,9 @@ where
     #[returns(Option<Uint128>)]
     MaxRedeem { owner: String },
 
-    /// Returns the amount of the underlying asset managed by vault as `Uint128`.
+    /// Returns the amount of the underlying assets managed denominated in base tokens,
+    /// where the base token is the token returned as part of the `VaultInfo` when querying
+    /// `Info {}`.
     /// Useful for display purposes, and does not have to confer the exact
     /// amount of underlying assets.
     #[returns(Uint128)]
@@ -186,10 +188,9 @@ pub struct VaultStandardInfo {
 /// Returned by QueryMsg::Info and contains information about this vault
 #[cw_serde]
 pub struct VaultInfo {
-    /// Coins required to enter vault.
-    /// Amount will be proportional to the share of which it should occupy in the group
-    /// (e.g. { denom: osmo, amount: 1 }, { denom: atom, amount: 1 } indicate a 50-50 split)
-    pub deposit_token: Token,
+    /// The token that is accepted for deposits, withdrawals and used for accounting
+    /// in the vault.
+    pub base_token: Token,
     /// Denom of vault token
     pub vault_token: Token,
 }
@@ -201,7 +202,7 @@ pub enum Token {
 }
 
 impl Token {
-    pub fn to_addr(&self, api: &dyn Api) -> StdResult<Addr> {
+    pub fn to_cw20_addr(&self, api: &dyn Api) -> StdResult<Addr> {
         match self {
             Token::Native(denom) => Err(StdError::generic_err(format!(
                 "Native token {} cannot be converted to address",
@@ -211,7 +212,7 @@ impl Token {
         }
     }
 
-    pub fn to_native(&self) -> StdResult<String> {
+    pub fn to_native_denom(&self) -> StdResult<String> {
         match self {
             Token::Native(denom) => Ok(denom.clone()),
             Token::Cw20(_) => Err(StdError::generic_err(
