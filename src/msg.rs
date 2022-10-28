@@ -1,3 +1,5 @@
+#[cfg(feature = "force-unlock")]
+use crate::extensions::force_unlock::ForceUnlockExecuteMsg;
 #[cfg(feature = "lockup")]
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
@@ -51,6 +53,8 @@ pub enum ExtensionExecuteMsg {
     Keeper(KeeperExecuteMsg),
     #[cfg(feature = "lockup")]
     Lockup(LockupExecuteMsg),
+    #[cfg(feature = "force-unlock")]
+    ForceUnlock(ForceUnlockExecuteMsg),
 }
 
 #[cw_serde]
