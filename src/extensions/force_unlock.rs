@@ -7,11 +7,11 @@ pub enum ForceUnlockExecuteMsg {
     /// immediately return the base tokens. Used in the event of
     /// liquidation. The caller must pass the native vault tokens in the funds
     /// field.
-    ForceWithdraw {
+    ForceRedeem {
         /// The address which should receive the withdrawn assets. If not set,
         /// the caller address will be used instead.
         recipient: Option<String>,
-        /// The amount of vault tokens to force unlock.
+        /// The amount of vault tokens to force redeem.
         amount: Uint128,
     },
 
@@ -20,7 +20,7 @@ pub enum ForceUnlockExecuteMsg {
     ForceWithdrawUnlocking {
         /// The ID of the unlocking position from which to force withdraw
         lockup_id: u64,
-        /// Optional amount of basetokens to be force withdrawn.
+        /// Optional amount of base tokens to be force withdrawn.
         /// If None is passed, the entire position will be force withdrawn.
         amount: Option<Uint128>,
         /// The address which should receive the withdrawn assets. If not set,
