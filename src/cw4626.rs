@@ -3,12 +3,12 @@ use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{Binary, Empty, Uint128};
 use cw20::{
     AllAccountsResponse, AllAllowancesResponse, AllowanceResponse, BalanceResponse,
-    DownloadLogoResponse, MarketingInfoResponse, MinterResponse, TokenInfoResponse,
+    DownloadLogoResponse, MarketingInfoResponse, TokenInfoResponse,
 };
 use cw20::{Cw20Coin, Expiration, Logo};
 
 #[cw_serde]
-pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
+pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
     //--------------------------------------------------------------------------------------------------
     // Standard CW20 ExecuteMsgs
     //--------------------------------------------------------------------------------------------------
@@ -87,8 +87,6 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg, S = Empty> {
         recipient: Option<String>,
     },
 
-    Callback(S),
-
     VaultExtension(T),
 }
 
@@ -110,11 +108,6 @@ pub enum Cw4626QueryMsg<T = ExtensionQueryMsg> {
     /// Return type: AllowanceResponse.
     #[returns(AllowanceResponse)]
     Allowance { owner: String, spender: String },
-    /// Only with "mintable" extension.
-    /// Returns who can mint and the hard cap on maximum tokens after minting.
-    /// Return type: MinterResponse.
-    #[returns(MinterResponse)]
-    Minter {},
     /// Only with "marketing" extension
     /// Returns more metadata on the contract to display in the client:
     /// - description, logo, project url, etc.
