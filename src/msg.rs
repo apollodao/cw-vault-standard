@@ -8,7 +8,7 @@ use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Empty;
-use cosmwasm_std::{Addr, Api, StdError, StdResult, Uint128};
+use cosmwasm_std::Uint128;
 use schemars::JsonSchema;
 
 #[cw_serde]
@@ -167,35 +167,10 @@ pub struct VaultStandardInfo {
 #[cw_serde]
 pub struct VaultInfo {
     /// The token that is accepted for deposits, withdrawals and used for accounting
-    /// in the vault.
-    pub base_token: TokenInfo,
-    /// Denom of vault token
-    pub vault_token: TokenInfo,
-}
-
-#[cw_serde]
-pub enum TokenInfo {
-    Native(String),
-    Cw20(String),
-}
-
-impl TokenInfo {
-    pub fn to_cw20_addr(&self, api: &dyn Api) -> StdResult<Addr> {
-        match self {
-            TokenInfo::Native(denom) => Err(StdError::generic_err(format!(
-                "Native token {} cannot be converted to address",
-                denom
-            ))),
-            TokenInfo::Cw20(addr) => api.addr_validate(addr),
-        }
-    }
-
-    pub fn to_native_denom(&self) -> StdResult<String> {
-        match self {
-            TokenInfo::Native(denom) => Ok(denom.clone()),
-            TokenInfo::Cw20(_) => Err(StdError::generic_err(
-                "Cw20 token cannot be converted to native token",
-            )),
-        }
-    }
+    /// in the vault. The denom if it is a native token and the contract address if
+    /// it is a cw20 token.
+    pub base_token: String,
+    /// Vault token. The denom if it is a native token and the contract address if
+    /// it is a cw20 token.
+    pub vault_token: String,
 }
