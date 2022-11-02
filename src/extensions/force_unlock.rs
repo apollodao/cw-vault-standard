@@ -27,4 +27,11 @@ pub enum ForceUnlockExecuteMsg {
         /// the assets will be sent to the caller.
         recipient: Option<String>,
     },
+
+    /// Update the whitelist of addresses that can call ForceRedeem and
+    /// ForceWithdrawUnlocking.
+    UpdateForceWithdrawWhitelist {
+        add_addresses: Vec<String>,
+        remove_addresses: Vec<String>,
+    },
 }
