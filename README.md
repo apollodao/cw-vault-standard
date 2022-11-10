@@ -15,7 +15,7 @@ The `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums define a set of 
 
 
 ## Description and specification of ExecuteMsg variants
-Please refer to the API docs for a complete description of each variant. (****link****). TODO: add link to API docs
+Please refer to the [API docs](https://docs.rs/cosmwasm-vault-standard) for a complete description of each variant.
 
 ## How to use Extensions
 

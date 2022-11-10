@@ -42,8 +42,8 @@ pub enum LockupExecuteMsg {
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum LockupQueryMsg {
-    /// Returns a `Vec<UnlockingPosition>` containing all the currently unclaimed lockup
-    /// positions for the `owner`.
+    /// Returns a `Vec<UnlockingPosition>` containing all the currently
+    /// unclaimed lockup positions for the `owner`.
     #[returns(Vec<UnlockingPosition>)]
     UnlockingPositions {
         /// The address of the owner of the lockup
@@ -54,7 +54,8 @@ pub enum LockupQueryMsg {
         limit: Option<u32>,
     },
 
-    /// Returns `UnlockingPosition` info about a specific lockup, by owner and ID.
+    /// Returns `UnlockingPosition` info about a specific lockup, by owner and
+    /// ID.
     #[returns(UnlockingPosition)]
     UnlockingPosition {
         /// The ID of the lockup to query

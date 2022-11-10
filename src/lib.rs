@@ -25,9 +25,10 @@
 //! variants, please see the section on [how to use
 //! extensions](#how-to-use-extensions).
 //!
-//! ## Description and specification of ExecuteMsg variants
-//! Please refer to the API docs for a complete description of each variant.
-//! (****link****). TODO: add link to API docs
+//! ## Description and specification of ExecuteMsg and QueryMsg variants
+//! Please refer to the documentation page for each of the enums
+//! [VaultStandardExecuteMsg] and [VaultStandardQueryMsg] for a complete
+//! description of each variant.
 //!
 //! ## How to use Extensions
 //!
