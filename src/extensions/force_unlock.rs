@@ -1,6 +1,8 @@
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::Uint128;
 
+/// Additional ExecuteMsg variants for vaults that enable the ForceUnlock
+/// extension.
 #[cw_serde]
 pub enum ForceUnlockExecuteMsg {
     /// Can be called by whitelisted addresses to bypass the lockup and
@@ -31,7 +33,9 @@ pub enum ForceUnlockExecuteMsg {
     /// Update the whitelist of addresses that can call ForceRedeem and
     /// ForceWithdrawUnlocking.
     UpdateForceWithdrawWhitelist {
+        /// Addresses to add to the whitelist.
         add_addresses: Vec<String>,
+        /// Addresses to remove from the whitelist.
         remove_addresses: Vec<String>,
     },
 }
