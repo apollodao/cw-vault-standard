@@ -38,7 +38,7 @@
 //! exported [VaultStandardExecuteMsg] and [VaultStandardQueryMsg] enums. For
 //! example:
 //!
-//! ```rust
+//! ```ignore
 //! pub enum MyExtensionExecuteMsg {
 //!     MyVariant1 { ... },
 //!     MyVariant2 { ... },
@@ -48,7 +48,7 @@
 //! vault uses and then be passed in as the generic argument `T` to
 //! `VaultStandardExecuteMsg<T>`. For example:
 //!
-//! ```rust
+//! ```ignore
 //! pub enum ExtensionExecuteMsg {
 //!     MyExtension(MyExtensionExecuteMsg),
 //!     Lockup(LockupExecuteMsg),
