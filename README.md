@@ -1,6 +1,6 @@
 # CosmWasm Vault Standard
 
-A standard interface for tokenized vaults written in CosmWasm. This repo contains a set of `ExecuteMsg` and `QueryMsg` variants that should be implemented by a vault contract that aims to adhere to this standard.
+A standard interface for tokenized vaults written in CosmWasm. This repo contains a set of `ExecuteMsg` and `QueryMsg` variants that should be implemented by a vault contract that adheres to this standard.
 
 ## Vault Standard Fundamentals
 There are a few things to know about the vault standard:

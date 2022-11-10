@@ -65,12 +65,12 @@ where
 {
     /// Returns `VaultStandardInfo` with information on the version of the vault
     /// standard used as well as any enabled extensions.
-    #[returns(VaultStandardInfo)]
+    #[returns(VaultStandardInfoResponse)]
     VaultStandardInfo {},
 
     /// Returns `VaultInfo` representing vault requirements, lockup, & vault
     /// token denom.
-    #[returns(VaultInfo)]
+    #[returns(VaultInfoResponse)]
     Info {},
 
     /// Returns `Uint128` amount of vault tokens that will be returned for the
@@ -155,17 +155,17 @@ pub enum ExtensionQueryMsg {
 /// so that other contracts can do a RawQuery and read it directly from storage
 /// instead of needing to do a costly SmartQuery.
 #[cw_serde]
-pub struct VaultStandardInfo {
+pub struct VaultStandardInfoResponse {
     /// The version of the vault standard used. A number, e.g. 1, 2, etc.
     pub version: u16,
     /// A list of vault standard extensions used by the vault.
-    /// E.g. ["cw20", "lockup", "keeper"]
+    /// E.g. ["lockup", "keeper"]
     pub extensions: Vec<String>,
 }
 
 /// Returned by QueryMsg::Info and contains information about this vault
 #[cw_serde]
-pub struct VaultInfo {
+pub struct VaultInfoResponse {
     /// The token that is accepted for deposits, withdrawals and used for accounting
     /// in the vault. The denom if it is a native token and the contract address if
     /// it is a cw20 token.
