@@ -1,6 +1,7 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Addr;
 
+/// A job that can be performed by a keeper.
 #[cw_serde]
 pub struct KeeperJob {
     //The numeric ID of the job
@@ -11,6 +12,7 @@ pub struct KeeperJob {
     pub whitelisted_keepers: Vec<Addr>,
 }
 
+/// Additional ExecuteMsg variants for vaults that enable the Keeper extension.
 #[cw_serde]
 pub enum KeeperExecuteMsg {
     /// Callable by vault admin to whitelist a keeper to be able to execute a
@@ -24,6 +26,7 @@ pub enum KeeperExecuteMsg {
     ExecuteJob { job_id: u64 },
 }
 
+/// Additional QueryMsg variants for vaults that enable the Keeper extension.
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum KeeperQueryMsg {

@@ -8,6 +8,7 @@ pub const UNLOCKING_POSITION_CREATED_EVENT_TYPE: &str = "unlocking_position_crea
 /// that is emitted on call to `Unlock`.
 pub const UNLOCKING_POSITION_ATTR_KEY: &str = "lockup_id";
 
+/// Additional ExecuteMsg variants for vaults that enable the Lockup extension.
 #[cw_serde]
 pub enum LockupExecuteMsg {
     /// Unlock is called to initiate unlocking a locked position held by the
@@ -34,6 +35,7 @@ pub enum LockupExecuteMsg {
     },
 }
 
+/// Additional QueryMsg variants for vaults that enable the Lockup extension.
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum LockupQueryMsg {
@@ -61,8 +63,13 @@ pub enum LockupQueryMsg {
 /// Info about a currenly unlocking position.
 #[cw_serde]
 pub struct Lockup {
-    pub owner: Addr,
+    /// The ID of the lockup.
     pub id: u64,
+    /// The address of the owner of the lockup.
+    pub owner: Addr,
+    /// A `cw_utils::Expiration` containing information about when the position
+    /// completes unlocking.
     pub release_at: Expiration,
+    /// The amount of base tokens that are being unlocked.
     pub base_token_amount: Uint128,
 }

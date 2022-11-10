@@ -1,4 +1,5 @@
-//! CosmWasm Vault Standard
+#![warn(missing_docs)]
+//! # CosmWasm Vault Standard
 //!
 //! A standard interface for tokenized vaults written in CosmWasm. This repo
 //! contains a set of `ExecuteMsg` and `QueryMsg` variants that should be
@@ -62,10 +63,10 @@
 //! ## Included Extensions
 //!
 //! The following extensions are included in this repo:
-//! * [Lockup](src/extensions/lockup.rs)
-//! * [ForceUnlock](src/extensions/force_unlock.rs)
-//! * [Keeper](src/extensions/keeper.rs)
-//! * [Cw4626](src/extensions/cw4626.rs)
+//! * [Lockup](crate::extensions::lockup)
+//! * [ForceUnlock](crate::extensions::force_unlock)
+//! * [Keeper](crate::extensions::keeper)
+//! * [Cw4626](crate::extensions::cw4626)
 //!
 //! Each of these extensions are available in this repo via cargo features. To
 //! use them, you can import thl crate with a feature flag like this:
@@ -112,7 +113,10 @@
 //! module](https://github.com/CosmWasm/token-factory) available and can
 //! therefor not issue a Cosmos native token as the vault token.
 
+/// Module containing some pre-defined vault standard extensions.
 pub mod extensions;
+/// Module containing the vault standard ExecutMsg and QueryMsg enums, as well
+/// as QueryMsg response types.
 pub mod msg;
 
 pub use msg::*;

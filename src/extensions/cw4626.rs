@@ -1,4 +1,6 @@
-use crate::msg::{ExtensionExecuteMsg, ExtensionQueryMsg, VaultInfo, VaultStandardInfo};
+use crate::msg::{
+    ExtensionExecuteMsg, ExtensionQueryMsg, VaultInfoResponse, VaultStandardInfoResponse,
+};
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::{Binary, Empty, Uint128};
 use cw20::{
@@ -8,17 +10,19 @@ use cw20::{
 use cw20::{Expiration, Logo};
 use schemars::JsonSchema;
 
+/// The default ExecuteMsg variants that a vault using the Cw4626 extension must
+/// implement. This includes all of the variants from the default
+/// VaultStandardExecuteMsg, plus the variants from the CW20 standard. This enum
+/// can be extended with additional variants by defining an extension enum and
+/// then passing it as the generic argument `T` to this enum.
 #[cw_serde]
 pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
-    //--------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Standard CW20 ExecuteMsgs
-    //--------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     /// Transfer is a base message to move tokens to another account without
     /// triggering actions
-    Transfer {
-        recipient: String,
-        amount: Uint128,
-    },
+    Transfer { recipient: String, amount: Uint128 },
     /// Send is a base message to transfer tokens to a contract and trigger an
     /// action on the receiving contract.
     Send {
@@ -73,9 +77,10 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
     /// If set as the "marketing" role on the contract, upload a new URL, SVG,
     /// or PNG for the token
     UploadLogo(Logo),
-    //--------------------------------------------------------------------------------------------------
-    // CW4626 ExecuteMsgs
-    //--------------------------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    // Vault Standard ExecuteMsgs
+    //--------------------------------------------------------------------------
     Deposit {
         /// The amount of base tokens to deposit
         amount: Uint128,
@@ -93,18 +98,24 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
         recipient: Option<String>,
     },
 
+    /// Called to execute functionality of any enabled extensions.
     VaultExtension(T),
 }
 
+/// The default QueryMsg variants that a vault using the Cw4626 extension must
+/// implement. This includes all of the variants from the default
+/// VaultStandardQueryMsg, plus the variants from the CW20 standard. This enum
+/// can be extended with additional variants by defining an extension enum and
+/// then passing it as the generic argument `T` to this enum.
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum Cw4626QueryMsg<T = ExtensionQueryMsg>
 where
     T: JsonSchema,
 {
-    //--------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Standard CW20 QueryMsgs
-    //--------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     /// Returns the current balance of the given address, 0 if unset.
     /// Return type: BalanceResponse.
     #[returns(BalanceResponse)]
@@ -147,39 +158,41 @@ where
         start_after: Option<String>,
         limit: Option<u32>,
     },
-    /// Returns `VaultStandardInfo` with information on the version of the vault
-    /// standard used as well as any enabled extensions.
-    #[returns(VaultStandardInfo)]
+
+    //--------------------------------------------------------------------------
+    // Vault Standard QueryMsgs
+    //--------------------------------------------------------------------------
+    /// Returns `VaultStandardInfoResponse` with information on the version of
+    /// the vault standard used as well as any enabled extensions.
+    #[returns(VaultStandardInfoResponse)]
     VaultStandardInfo {},
 
-    /// Returns `VaultInfo` representing vault requirements, lockup, & vault
-    /// token denom.
-    #[returns(VaultInfo)]
+    /// Returns `VaultInfoResponse` representing vault requirements, lockup, &
+    /// vault token denom.
+    #[returns(VaultInfoResponse)]
     Info {},
 
     /// Returns `Uint128` amount of vault tokens that will be returned for the
-    /// passed in assets.
+    /// passed in `amount` of base tokens.
     ///
     /// Allows an on-chain or off-chain user to simulate the effects of their
     /// deposit at the current block, given current on-chain conditions.
     ///
-    /// MUST return as close to and no more than the exact amount of Vault
-    /// shares that would be minted in a deposit call in the same transaction.
-    /// I.e. deposit should return the same or more shares as previewDeposit if
-    /// called in the same transaction.
-    ///
-    /// MUST NOT account for deposit limits like those returned from maxDeposit
-    /// and should always act as though the deposit would be accepted,
-    /// regardless if the user has enough tokens approved, etc.
-    ///
-    /// MUST be inclusive of deposit fees. Integrators should be aware of the
-    /// existence of deposit fees.
+    /// Must return as close to and no more than the exact amount of vault
+    /// tokens that would be minted in a deposit call in the same transaction.
+    /// I.e. deposit should return the same or more vault tokens as
+    /// previewDeposit if called in the same transaction.
     #[returns(Uint128)]
     PreviewDeposit { amount: Uint128 },
 
-    /// Returns the number of base tokens that would be redeemed in exchange
-    /// `amount` for vault tokens. Used by Rover to calculate vault position
-    /// values.
+    /// Returns `Uint128` amount of base tokens that would be withdrawn in
+    /// exchange for redeeming `amount` of vault tokens.
+    ///
+    /// Allows an on-chain or off-chain user to simulate the effects of their
+    /// redeem at the current block, given current on-chain conditions.
+    ///
+    /// Must return as close to and no more than the exact amount of base tokens
+    /// that would be withdrawn in a redeem call in the same transaction.
     #[returns(Uint128)]
     PreviewRedeem { amount: Uint128 },
 
@@ -193,31 +206,33 @@ where
     #[returns(Uint128)]
     TotalVaultTokenSupply {},
 
-    /// The amount of shares that the vault would exchange for the amount of
-    /// assets provided, in an ideal scenario where all the conditions are met.
+    /// The amount of vault tokens that the vault would exchange for the amount
+    /// of assets provided, in an ideal scenario where all the conditions
+    /// are met.
     ///
     /// Useful for display purposes and does not have to confer the exact amount
-    /// of shares returned by the vault if the passed in assets were deposited.
-    /// This calculation may not reflect the “per-user” price-per-share, and
-    /// instead should reflect the “average-user’s” price-per-share, meaning
-    /// what the average user should expect to see when exchanging to and from.
+    /// of vault tokens returned by the vault if the passed in assets were
+    /// deposited. This calculation may not reflect the “per-user”
+    /// price-per-share, and instead should reflect the “average-user’s”
+    /// price-per-share, meaning what the average user should expect to see
+    /// when exchanging to and from.
     #[returns(Uint128)]
     ConvertToShares { amount: Uint128 },
 
     /// Returns the amount of base tokens that the Vault would exchange for
-    /// the `amount` of shares provided, in an ideal scenario where all the
-    /// conditions are met.
+    /// the `amount` of vault tokens provided, in an ideal scenario where all
+    /// the conditions are met.
     ///
     /// Useful for display purposes and does not have to confer the exact amount
-    /// of assets returned by the vault if the passed in shares were withdrawn.
-    /// This calculation may not reflect the “per-user” price-per-share, and
-    /// instead should reflect the “average-user’s” price-per-share, meaning
-    /// what the average user should expect to see when exchanging to and from.
+    /// of assets returned by the vault if the passed in vault tokens were
+    /// redeemed. This calculation may not reflect the “per-user”
+    /// price-per-share, and instead should reflect the “average-user’s”
+    /// price-per-share, meaning what the average user should expect to see
+    /// when exchanging to and from.
     #[returns(Uint128)]
     ConvertToAssets { amount: Uint128 },
 
-    /// TODO: How to handle return derive? We must supply a type here, but we
-    /// don't know it.
+    /// Handle quries of any enabled extensions.
     #[returns(Empty)]
     VaultExtension(T),
 }
