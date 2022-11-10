@@ -11,7 +11,7 @@ There are a few things to know about the vault standard:
 
 To create a vault contract that adheres to the standard, all you need to do is import the `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums and use them in the entrypoints of your contracts.
 
-The `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums define a set of variants that should be enough to cover most vault contract use cases, and all vaults that adhere to the standard must implement all of the provided default variants. If however your use case requires additional variants, please see the section on [defining an extension](#how-to-use-extensions).
+The `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums define a set of variants that should be enough to cover most vault contract use cases, and all vaults that adhere to the standard must implement all of the provided default variants. If however your use case requires additional variants, please see the section on [how to use extensions](#how-to-use-extensions).
 
 
 ## Description and specification of ExecuteMsg variants
@@ -19,7 +19,7 @@ Please refer to the API docs for a complete description of each variant. (****li
 
 ## How to use Extensions
 
-If the standard set of `ExecutMsg` and `QueryMsg` variants are not enough for your use case, you can include additional ones by defining an extension. The preferred way to do this is by creating a new enum that extends the exported `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums. For example:
+If the standard set of `ExecuteMsg` and `QueryMsg` variants are not enough for your use case, you can include additional ones by defining an extension. The preferred way to do this is by creating a new enum that extends the exported `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums. For example:
 
 ```rust
 pub enum MyExtensionExecuteMsg {
