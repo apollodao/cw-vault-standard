@@ -1,5 +1,5 @@
 [package]
-name = "cosmos-vault-standard"
+name = "cosmwasm-vault-standard"
 version = "0.1.0"
 edition = "2021"
 authors = ["Sturdy <sturdy@apollo.farm>"]
