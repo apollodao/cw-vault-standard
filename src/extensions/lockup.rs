@@ -42,10 +42,10 @@ pub enum LockupExecuteMsg {
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum LockupQueryMsg {
-    /// Returns a `Vec<Lockup>` containing all the currently unclaimed lockup
+    /// Returns a `Vec<UnlockingPosition>` containing all the currently unclaimed lockup
     /// positions for the `owner`.
-    #[returns(Vec<Lockup>)]
-    Lockups {
+    #[returns(Vec<UnlockingPosition>)]
+    UnlockingPositions {
         /// The address of the owner of the lockup
         owner: String,
         /// Return results only after this lockup_id
@@ -54,21 +54,21 @@ pub enum LockupQueryMsg {
         limit: Option<u32>,
     },
 
-    /// Returns `Lockup` info about a specific lockup, by owner and ID.
-    #[returns(Lockup)]
-    Lockup {
+    /// Returns `UnlockingPosition` info about a specific lockup, by owner and ID.
+    #[returns(UnlockingPosition)]
+    UnlockingPosition {
         /// The ID of the lockup to query
         lockup_id: u64,
     },
 
-    /// Returns `cw_utils::Duration` duration of the lockup.
+    /// Returns `cw_utils::Duration` duration of the lockup of the vault.
     #[returns(Duration)]
     LockupDuration {},
 }
 
 /// Info about a currenly unlocking position.
 #[cw_serde]
-pub struct Lockup {
+pub struct UnlockingPosition {
     /// The ID of the lockup.
     pub id: u64,
     /// The address of the owner of the lockup.
