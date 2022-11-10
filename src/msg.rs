@@ -86,8 +86,8 @@ where
     ///
     /// Must return as close to and no more than the exact amount of vault
     /// tokens that would be minted in a deposit call in the same transaction.
-    /// I.e. deposit should return the same or more vault tokens as
-    /// previewDeposit if called in the same transaction.
+    /// I.e. Deposit should return the same or more vault tokens as
+    /// PreviewDeposit if called in the same transaction.
     #[returns(Uint128)]
     PreviewDeposit {
         /// The amount of base tokens to preview depositing.
@@ -124,8 +124,8 @@ where
     ///
     /// Useful for display purposes and does not have to confer the exact amount
     /// of vault tokens returned by the vault if the passed in assets were
-    /// deposited. This calculation may not reflect the “per-user”
-    /// price-per-share, and instead should reflect the “average-user’s”
+    /// deposited. This calculation should not reflect the "per-user"
+    /// price-per-share, and instead should reflect the "average-user’s"
     /// price-per-share, meaning what the average user should expect to see
     /// when exchanging to and from.
     #[returns(Uint128)]
@@ -140,8 +140,8 @@ where
     ///
     /// Useful for display purposes and does not have to confer the exact amount
     /// of assets returned by the vault if the passed in vault tokens were
-    /// redeemed. This calculation may not reflect the “per-user”
-    /// price-per-share, and instead should reflect the “average-user’s”
+    /// redeemed. This calculation should not reflect the "per-user"
+    /// price-per-share, and instead should reflect the "average-user’s"
     /// price-per-share, meaning what the average user should expect to see
     /// when exchanging to and from.
     #[returns(Uint128)]
@@ -150,7 +150,7 @@ where
         amount: Uint128,
     },
 
-    /// Handle quries of any enabled extensions.
+    /// Handle queries of any enabled extensions.
     #[returns(Empty)]
     VaultExtension(T),
 }

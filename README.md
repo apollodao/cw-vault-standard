@@ -48,7 +48,7 @@ The following extensions are included in this repo:
 * [Keeper](src/extensions/keeper.rs)
 * [Cw4626](src/extensions/cw4626.rs)
 
-Each of these extensions are available in this repo via cargo features. To use them, you can import thl crate with a feature flag like this:
+Each of these extensions are available in this repo via cargo features. To use them, you can import the crate with a feature flag like this:
 
 ```toml
 cosmwasm-vault-standard = { version = "1.0.0", features = ["lockup", "force_unlock"] }
