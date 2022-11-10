@@ -134,7 +134,7 @@ dependencies = [
 
 [[package]]
 name = "cosmwasm-vault-standard"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
