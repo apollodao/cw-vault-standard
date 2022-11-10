@@ -54,8 +54,8 @@ pub enum LockupQueryMsg {
         limit: Option<u32>,
     },
 
-    /// Returns `UnlockingPosition` info about a specific lockup, by owner and
-    /// ID.
+    /// Returns an `UnlockingPosition` info about a specific lockup, by owner
+    /// and ID.
     #[returns(UnlockingPosition)]
     UnlockingPosition {
         /// The ID of the lockup to query

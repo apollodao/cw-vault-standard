@@ -6,7 +6,7 @@ use cosmwasm_std::Addr;
 pub struct KeeperJob {
     /// The numeric ID of the job
     pub id: u64,
-    /// bool whether only whitelisted keepers can execute the job
+    /// whether only whitelisted keepers can execute the job or not
     pub whitelist: bool,
     /// A list of whitelisted addresses that can execute the job
     pub whitelisted_keepers: Vec<Addr>,

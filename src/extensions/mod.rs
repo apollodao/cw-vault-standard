@@ -11,7 +11,7 @@ pub mod lockup;
 /// implements the `Lockup` extension, but where some whitelisted addresses are
 /// allowed to call the `ForceUnlock` variant on the extension `ExecuteMsg` and
 /// immediately unlock the vault tokens of the specified user. This is useful if
-/// the vault is used  with leverage and a liquidator needs to be able to
+/// the vault is used with leverage and a liquidator needs to be able to
 /// liquidate the tokens locked in the vault.
 #[cfg(feature = "force-unlock")]
 pub mod force_unlock;
@@ -34,6 +34,6 @@ pub mod keeper;
 /// the CW20 standard. This is useful if you are writing a vault on a chain that
 /// does not yet have the [TokenFactory
 /// module](https://github.com/CosmWasm/token-factory) available and can
-/// therefor not issue a Cosmos native token as the vault token.
+/// therefore not issue a Cosmos native token as the vault token.
 #[cfg(feature = "cw4626")]
 pub mod cw4626;
