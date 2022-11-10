@@ -1,23 +1,25 @@
 # CosmWasm Vault Standard
 
 A standard interface for tokenized vaults written in CosmWasm. This repo contains a set of `ExecuteMsg` and `QueryMsg` variants that should be implemented by a vault contract that aims to adhere to this standard.
-## How to create a vault contract that adheres to this standard
-
-To create a vault contract that adheres to the standard, all you need to do is import the `ExecuteMsg` and `QueryMsg` enums and use them in the entrypoints of your contracts.
-
-The `ExecuteMsg` and `QueryMsg` enums define a set of variants that should be enough to cover most vault contract use cases, and all vaults that adhere to the standard must implement all of the provided default variants. If however your use case requires additional variants, please see the section on [defining an extension](##how-to-use-extensions).
 
 ## Vault Standard Fundamentals
 There are a few things to know about the vault standard:
 * Each vault has one specific token that is used for deposits, withdrawals and accounting. This token is called the `base token`.
 * Each vault has a `vault token` that represents the users share in the vault. The number of vault tokens the user receives should be based on the the number of base tokens they deposit.
 
+## How to create a vault contract that adheres to this standard
+
+To create a vault contract that adheres to the standard, all you need to do is import the `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums and use them in the entrypoints of your contracts.
+
+The `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums define a set of variants that should be enough to cover most vault contract use cases, and all vaults that adhere to the standard must implement all of the provided default variants. If however your use case requires additional variants, please see the section on [defining an extension](#how-to-use-extensions).
+
+
 ## Description and specification of ExecuteMsg variants
 Please refer to the API docs for a complete description of each variant. (****link****). TODO: add link to API docs
 
 ## How to use Extensions
 
-If the standard set of `ExecutMsg` and `QueryMsg` variants are not enough for your use-case, you can include additional ones by defining an extension. The preferred way to do this is by creating a new enum that extends the `ExecuteMsg` and `QueryMsg` enums. For example:
+If the standard set of `ExecutMsg` and `QueryMsg` variants are not enough for your use case, you can include additional ones by defining an extension. The preferred way to do this is by creating a new enum that extends the exported `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums. For example:
 
 ```rust
 pub enum MyExtensionExecuteMsg {
@@ -25,7 +27,7 @@ pub enum MyExtensionExecuteMsg {
     MyVariant2 { ... },
 }
 ```
-This variant can then be included in an enum with all the Extensions that your vault uses and then be passed in as the generic argument to `ExecuteMsg`. For example:
+This enum can then be included in an enum with all the Extensions that your vault uses and then be passed in as the generic argument `T` to `VaultStandardExecuteMsg<T>`. For example:
 
 ```rust
 pub enum ExtensionExecuteMsg {
@@ -46,7 +48,7 @@ The following extensions are included in this repo:
 * [Keeper](src/extensions/keeper.rs)
 * [Cw4626](src/extensions/cw4626.rs)
 
-Esvh of these extensions are available in this repo via cargo features. To use them, you can import thl crate with a feature flag like this:
+Each of these extensions are available in this repo via cargo features. To use them, you can import thl crate with a feature flag like this:
 
 ```toml
 cosmwasm-vault-standard = { version = "1.0.0", features = ["lockup", "force_unlock"] }
