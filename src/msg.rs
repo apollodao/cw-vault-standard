@@ -12,7 +12,7 @@ use cosmwasm_std::Uint128;
 use schemars::JsonSchema;
 
 #[cw_serde]
-pub enum ExecuteMsg<T = ExtensionExecuteMsg> {
+pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
@@ -59,7 +59,7 @@ pub enum ExtensionExecuteMsg {
 
 #[cw_serde]
 #[derive(QueryResponses)]
-pub enum QueryMsg<T = ExtensionQueryMsg>
+pub enum VaultStandardQueryMsg<T = ExtensionQueryMsg>
 where
     T: JsonSchema,
 {
