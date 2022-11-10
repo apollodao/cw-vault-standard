@@ -1,16 +1,17 @@
 #[cfg(feature = "force-unlock")]
 use crate::extensions::force_unlock::ForceUnlockExecuteMsg;
+#[cfg(feature = "keeper")]
+use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 #[cfg(feature = "lockup")]
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
-#[cfg(feature = "keeper")]
-use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
-
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::Empty;
-use cosmwasm_std::Uint128;
+use cosmwasm_std::{Empty, Uint128};
 use schemars::JsonSchema;
 
+/// The default ExecuteMsg variants that all vaults must implement.
+/// This enum can be extended with additional variants by defining an extension
+/// enum and then passing it as the generic argument `T` to this enum.
 #[cw_serde]
 pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
@@ -34,13 +35,14 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
         recipient: Option<String>,
         /// The amount of vault tokens sent to the contract. In the case that
         /// the vault token is a Cosmos native denom, we of course have this
-        /// information in the info.funds, but if the vault implements the Cw4626
-        /// API, then we need this argument. We figured it's better to have one
-        /// API for both types of vaults, so we require this argument.
+        /// information in the info.funds, but if the vault implements the
+        /// Cw4626 API, then we need this argument. We figured it's
+        /// better to have one API for both types of vaults, so we
+        /// require this argument.
         amount: Uint128,
     },
 
-    /// Support for custom extensions
+    /// Called to execute functionality of any enabled extensions.
     VaultExtension(T),
 }
 
@@ -57,6 +59,9 @@ pub enum ExtensionExecuteMsg {
     ForceUnlock(ForceUnlockExecuteMsg),
 }
 
+/// The default QueryMsg variants that all vaults must implement.
+/// This enum can be extended with additional variants by defining an extension
+/// enum and then passing it as the generic argument `T` to this enum.
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum VaultStandardQueryMsg<T = ExtensionQueryMsg>
@@ -94,13 +99,14 @@ where
     PreviewDeposit { amount: Uint128 },
 
     /// Returns the number of base tokens that would be redeemed in exchange
-    /// `amount` for vault tokens. Used by Rover to calculate vault position values.
+    /// `amount` for vault tokens. Used by Rover to calculate vault position
+    /// values.
     #[returns(Uint128)]
     PreviewRedeem { amount: Uint128 },
 
-    /// Returns the amount of assets managed by the vault denominated in base tokens.
-    /// Useful for display purposes, and does not have to confer the exact
-    /// amount of base tokens.
+    /// Returns the amount of assets managed by the vault denominated in base
+    /// tokens. Useful for display purposes, and does not have to confer the
+    /// exact amount of base tokens.
     #[returns(Uint128)]
     TotalAssets {},
 
@@ -131,8 +137,7 @@ where
     #[returns(Uint128)]
     ConvertToAssets { amount: Uint128 },
 
-    /// TODO: How to handle return derive? We must supply a type here, but we
-    /// don't know it.
+    /// Handle quries of any enabled extensions.
     #[returns(Empty)]
     VaultExtension(T),
 }
@@ -166,11 +171,11 @@ pub struct VaultStandardInfoResponse {
 /// Returned by QueryMsg::Info and contains information about this vault
 #[cw_serde]
 pub struct VaultInfoResponse {
-    /// The token that is accepted for deposits, withdrawals and used for accounting
-    /// in the vault. The denom if it is a native token and the contract address if
-    /// it is a cw20 token.
+    /// The token that is accepted for deposits, withdrawals and used for
+    /// accounting in the vault. The denom if it is a native token and the
+    /// contract address if it is a cw20 token.
     pub base_token: String,
-    /// Vault token. The denom if it is a native token and the contract address if
-    /// it is a cw20 token.
+    /// Vault token. The denom if it is a native token and the contract address
+    /// if it is a cw20 token.
     pub vault_token: String,
 }

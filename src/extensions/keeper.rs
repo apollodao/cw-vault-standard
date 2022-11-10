@@ -13,7 +13,8 @@ pub struct KeeperJob {
 
 #[cw_serde]
 pub enum KeeperExecuteMsg {
-    /// Callable by vault admin to whitelist a keeper to be able to execute a job
+    /// Callable by vault admin to whitelist a keeper to be able to execute a
+    /// job
     WhitelistKeeper { job_id: u64, keeper: String },
     /// Callable by vault admin to remove a keeper from the whitelist of a job
     BlacklistKeeper { job_id: u64, keeper: String },
