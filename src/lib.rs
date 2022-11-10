@@ -1,4 +1,3 @@
-#![warn(missing_docs)]
 //! # CosmWasm Vault Standard
 //!
 //! A standard interface for tokenized vaults written in CosmWasm. This repo

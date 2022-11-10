@@ -81,6 +81,8 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
     //--------------------------------------------------------------------------
     // Vault Standard ExecuteMsgs
     //--------------------------------------------------------------------------
+    /// Called to deposit into the vault. Native assets are passed in the funds
+    /// parameter.
     Deposit {
         /// The amount of base tokens to deposit
         amount: Uint128,
@@ -89,6 +91,10 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
         recipient: Option<String>,
     },
 
+    /// Called to redeem vault tokens and receive assets back from the vault.
+    /// The native vault token must be passed in the funds parameter, unless the
+    /// lockup extension is called, in which case the vault token has already
+    /// been passed to ExecuteMsg::Unlock.
     Redeem {
         /// Amount of vault tokens to redeem
         amount: Uint128,
@@ -183,7 +189,10 @@ where
     /// I.e. deposit should return the same or more vault tokens as
     /// previewDeposit if called in the same transaction.
     #[returns(Uint128)]
-    PreviewDeposit { amount: Uint128 },
+    PreviewDeposit {
+        /// The amount of base tokens to preview depositing.
+        amount: Uint128,
+    },
 
     /// Returns `Uint128` amount of base tokens that would be withdrawn in
     /// exchange for redeeming `amount` of vault tokens.
@@ -194,7 +203,10 @@ where
     /// Must return as close to and no more than the exact amount of base tokens
     /// that would be withdrawn in a redeem call in the same transaction.
     #[returns(Uint128)]
-    PreviewRedeem { amount: Uint128 },
+    PreviewRedeem {
+        /// The amount of vault tokens to preview redeeming.
+        amount: Uint128,
+    },
 
     /// Returns the amount of assets managed by the vault denominated in base
     /// tokens. Useful for display purposes, and does not have to confer the
@@ -217,7 +229,10 @@ where
     /// price-per-share, meaning what the average user should expect to see
     /// when exchanging to and from.
     #[returns(Uint128)]
-    ConvertToShares { amount: Uint128 },
+    ConvertToShares {
+        /// The amount of base tokens to convert to vault tokens.
+        amount: Uint128,
+    },
 
     /// Returns the amount of base tokens that the Vault would exchange for
     /// the `amount` of vault tokens provided, in an ideal scenario where all
@@ -230,7 +245,10 @@ where
     /// price-per-share, meaning what the average user should expect to see
     /// when exchanging to and from.
     #[returns(Uint128)]
-    ConvertToAssets { amount: Uint128 },
+    ConvertToAssets {
+        /// The amount of vault tokens to convert to base tokens.
+        amount: Uint128,
+    },
 
     /// Handle quries of any enabled extensions.
     #[returns(Empty)]

@@ -33,7 +33,9 @@ pub enum ForceUnlockExecuteMsg {
     /// Update the whitelist of addresses that can call ForceRedeem and
     /// ForceWithdrawUnlocking.
     UpdateForceWithdrawWhitelist {
+        /// Addresses to add to the whitelist.
         add_addresses: Vec<String>,
+        /// Addresses to remove from the whitelist.
         remove_addresses: Vec<String>,
     },
 }

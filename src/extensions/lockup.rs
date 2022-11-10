@@ -22,7 +22,10 @@ pub enum LockupExecuteMsg {
     ///
     /// Like Redeem, this takes an amount so that the same API can be used for
     /// CW4626 and native tokens.
-    Unlock { amount: Uint128 },
+    Unlock {
+        /// The amount of vault tokens to unlock.
+        amount: Uint128,
+    },
 
     /// Withdraw an unlocking position that has finished unlocking.
     WithdrawUnlocked {
@@ -53,7 +56,10 @@ pub enum LockupQueryMsg {
 
     /// Returns `Lockup` info about a specific lockup, by owner and ID.
     #[returns(Lockup)]
-    Lockup { lockup_id: u64 },
+    Lockup {
+        /// The ID of the lockup to query
+        lockup_id: u64,
+    },
 
     /// Returns `cw_utils::Duration` duration of the lockup.
     #[returns(Duration)]
