@@ -15,7 +15,7 @@ use schemars::JsonSchema;
 /// VaultStandardExecuteMsg, plus the variants from the CW20 standard. This enum
 /// can be extended with additional variants by defining an extension enum and
 /// then passing it as the generic argument `T` to this enum.
-#cfg(feature = "cw4626")
+#[cfg(feature = "cw4626")]
 #[cw_serde]
 pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
     //--------------------------------------------------------------------------
