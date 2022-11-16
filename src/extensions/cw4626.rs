@@ -114,7 +114,7 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
 /// VaultStandardQueryMsg, plus the variants from the CW20 standard. This enum
 /// can be extended with additional variants by defining an extension enum and
 /// then passing it as the generic argument `T` to this enum.
-#cfg(feature = "cw4626")
+#[cfg(feature = "cw4626")]
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum Cw4626QueryMsg<T = ExtensionQueryMsg>
