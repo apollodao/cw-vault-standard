@@ -90,7 +90,7 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
         /// not set, the caller address will be used instead.
         recipient: Option<String>,
     },
-
+    #[cfg(not(feature = "lockup"))]
     /// Called to redeem vault tokens and receive assets back from the vault.
     /// The native vault token must be passed in the funds parameter, unless the
     /// lockup extension is called, in which case the vault token has already
