@@ -71,6 +71,18 @@ pub enum ExtensionExecuteMsg {
     ForceUnlock(ForceUnlockExecuteMsg),
 }
 
+impl ExtensionExecuteMsg {
+    /// Convert an ExtensionExecuteMsg into a [`CosmosMsg`].
+    pub fn into_cosmos_msg(&self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
+        Ok(WasmMsg::Execute {
+            contract_addr,
+            msg: to_binary(&VaultStandardExecuteMsg::VaultExtension(self))?,
+            funds,
+        }
+        .into())
+    }
+}
+
 /// The default QueryMsg variants that all vaults must implement.
 /// This enum can be extended with additional variants by defining an extension
 /// enum and then passing it as the generic argument `T` to this enum.
