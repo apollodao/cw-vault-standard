@@ -1,3 +1,4 @@
+#![cfg_attr(docsrs, feature(doc_cfg))]
 //! # CosmWasm Vault Standard
 //!
 //! A standard interface for tokenized vaults written in CosmWasm. This repo
@@ -46,7 +47,7 @@
 //! ```
 //! This enum can then be included in an enum with all the Extensions that your
 //! vault uses and then be passed in as the generic argument `T` to
-//! `VaultStandardExecuteMsg<T>`. For example:
+//! [`VaultStandardExecuteMsg<T>`]. For example:
 //!
 //! ```ignore
 //! pub enum ExtensionExecuteMsg {
@@ -80,9 +81,9 @@
 //! ### Lockup
 //! The lockup extension can be used to create vaults where the vault tokens are
 //! not immediately reedemable. Instead of normally calling the
-//! `VaultStandardExecuteMsg::Redeem` variant, the user has to call the `Unlock`
-//! variant on the Lockup extension `ExecuteMsg` and wait for a specified period
-//! of time before they can withdraw their base tokens via the
+//! [`VaultStandardExecuteMsg::Redeem`] variant, the user has to call the
+//! `Unlock` variant on the Lockup extension `ExecuteMsg` and wait for a
+//! specified period of time before they can withdraw their base tokens via the
 //! `WithdrawUnlocked` variant.
 //!
 //! ### ForceUnlock
@@ -100,10 +101,11 @@
 //!
 //! ### Cw4626
 //! The Cw4626 extension is the only extension provided with in this repo that
-//! does not extend the standard `ExecuteMsg` and `QueryMsg` enums with by
-//! putting its variants inside of a `VaultExtension` variant. Instead it adds
-//! more variants at the top level, namely the variants from the [CW20
-//! standard](https://github.com/CosmWasm/cw-plus/tree/main/packages/cw20) This
+//! does not extend the default [`VaultStandardExecuteMsg`] and
+//! [`VaultStandardQueryMsg`] enums by putting its variants inside of the
+//! [`VaultStandardExecuteMsg::VaultExtension`] variant. Instead it adds more
+//! variants at the top level, namely the variants from the [CW20
+//! standard](https://github.com/CosmWasm/cw-plus/tree/main/packages/cw20). This
 //! is inspired by the [ERC-4626 standard on
 //! Ethereum](https://ethereum.org/en/developers/docs/standards/tokens/erc-4626/)
 //! and allows the vault to, instead of using a Cosmos native token as the vault

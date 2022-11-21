@@ -31,7 +31,7 @@ pub enum KeeperExecuteMsg {
         keeper: String,
     },
     /// Execute a keeper job. Should only be able to be called if
-    /// QueryMsg::KeeperJobReady returns true, and only by whitelisted
+    /// [`KeeperQueryMsg::KeeperJobReady`] returns true, and only by whitelisted
     /// keepers if the whitelist bool on the KeeperJob is set to true.
     ExecuteJob {
         /// The ID of the job to execute
@@ -43,10 +43,10 @@ pub enum KeeperExecuteMsg {
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum KeeperQueryMsg {
-    /// Returns Vec<KeeperJob>
+    /// Returns [`Vec<KeeperJob>`]
     #[returns(Vec<KeeperJob>)]
     KeeperJobs {},
-    /// Returns Vec<Addr>
+    /// Returns [`Vec<Addr>`]
     #[returns(Vec<Addr>)]
     WhitelistedKeepers {
         /// The ID of the job to get the whitelisted keepers for
