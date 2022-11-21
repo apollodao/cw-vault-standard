@@ -17,6 +17,10 @@ force-unlock = []
 keeper = []
 cw4626 = ["cw20"]
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [dependencies]
 cosmwasm-std = "1.1.0"
 schemars = "0.8.8"

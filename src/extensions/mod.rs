@@ -5,6 +5,7 @@
 /// of time before they can withdraw their base tokens via the
 /// `WithdrawUnlocked` variant.
 #[cfg(feature = "lockup")]
+#[cfg_attr(docsrs, doc(cfg(feature = "lockup")))]
 pub mod lockup;
 
 /// The force unlock extension can be used to create a vault that also
@@ -14,12 +15,14 @@ pub mod lockup;
 /// the vault is used with leverage and a liquidator needs to be able to
 /// liquidate the tokens locked in the vault.
 #[cfg(feature = "force-unlock")]
+#[cfg_attr(docsrs, doc(cfg(feature = "force-unlock")))]
 pub mod force_unlock;
 
 /// The keeper extension can be used to add functionality for either whitelisted
 /// addresses or anyone to act as a "keeper" for the vault and call functions to
 /// perform jobs that need to be done to keep the vault running.
 #[cfg(feature = "keeper")]
+#[cfg_attr(docsrs, doc(cfg(feature = "keeper")))]
 pub mod keeper;
 
 /// The Cw4626 extension is the only extension provided with in this repo that
@@ -36,4 +39,5 @@ pub mod keeper;
 /// module](https://github.com/CosmWasm/token-factory) available and can
 /// therefore not issue a Cosmos native token as the vault token.
 #[cfg(feature = "cw4626")]
+#[cfg_attr(docsrs, doc(cfg(feature = "cw4626")))]
 pub mod cw4626;
