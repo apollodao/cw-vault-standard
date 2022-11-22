@@ -25,6 +25,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 cosmwasm-std = "1.1.0"
 schemars = "0.8.8"
 serde = { version = "1.0.137", default-features = false, features = ["derive"] }
-cosmwasm-schema = { version = "1.1.0" }
+# We must unfourtunately use 1.1.5 since there is a breaking change related to `QueryResponses` macro in 1.1.6
+cosmwasm-schema = { version = ">= 1.0.0, <= 1.1.5" }
 cw-utils = { version = "0.16.0", optional = true }
 cw20 = { version = "0.16.0", optional = true }
