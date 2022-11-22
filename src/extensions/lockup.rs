@@ -2,6 +2,8 @@ use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::{to_binary, Addr, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
 use cw_utils::{Duration, Expiration};
 
+use crate::{ExtensionExecuteMsg, VaultStandardExecuteMsg};
+
 /// Type for the unlocking position created event emitted on call to `Unlock`.
 pub const UNLOCKING_POSITION_CREATED_EVENT_TYPE: &str = "unlocking_position_created";
 /// Key for the lockup id attribute in the "unlocking position created" event
@@ -43,7 +45,9 @@ impl LockupExecuteMsg {
     pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr,
-            msg: to_binary(&self)?,
+            msg: to_binary(&VaultStandardExecuteMsg::VaultExtension(
+                ExtensionExecuteMsg::Lockup(self),
+            ))?,
             funds,
         }
         .into())
