@@ -2,7 +2,7 @@ use crate::msg::{
     ExtensionExecuteMsg, ExtensionQueryMsg, VaultInfoResponse, VaultStandardInfoResponse,
 };
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Binary, Empty, Uint128};
+use cosmwasm_std::{to_binary, Binary, Coin, CosmosMsg, Empty, StdResult, Uint128, WasmMsg};
 use cw20::{
     AllAccountsResponse, AllAllowancesResponse, AllowanceResponse, BalanceResponse,
     DownloadLogoResponse, MarketingInfoResponse, TokenInfoResponse,
@@ -106,6 +106,18 @@ pub enum Cw4626ExecuteMsg<T = ExtensionExecuteMsg> {
 
     /// Called to execute functionality of any enabled extensions.
     VaultExtension(T),
+}
+
+impl Cw4626ExecuteMsg {
+    /// Convert a [`Cw4626ExecuteMsg`] into a [`CosmosMsg`].
+    pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
+        Ok(WasmMsg::Execute {
+            contract_addr,
+            msg: to_binary(&self)?,
+            funds,
+        }
+        .into())
+    }
 }
 
 /// The default QueryMsg variants that a vault using the Cw4626 extension must

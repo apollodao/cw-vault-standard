@@ -1,5 +1,5 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Addr, Uint128};
+use cosmwasm_std::{to_binary, Addr, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
 use cw_utils::{Duration, Expiration};
 
 /// Type for the unlocking position created event emitted on call to `Unlock`.
@@ -36,6 +36,18 @@ pub enum LockupExecuteMsg {
         /// The ID of the expired lockup to withdraw from.
         lockup_id: u64,
     },
+}
+
+impl LockupExecuteMsg {
+    /// Convert a [`LockupExecuteMsg`] into a [`CosmosMsg`].
+    pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
+        Ok(WasmMsg::Execute {
+            contract_addr,
+            msg: to_binary(&self)?,
+            funds,
+        }
+        .into())
+    }
 }
 
 /// Additional QueryMsg variants for vaults that enable the Lockup extension.

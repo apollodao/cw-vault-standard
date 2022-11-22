@@ -1,5 +1,5 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::Uint128;
+use cosmwasm_std::{to_binary, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
 
 /// Additional ExecuteMsg variants for vaults that enable the ForceUnlock
 /// extension.
@@ -38,4 +38,16 @@ pub enum ForceUnlockExecuteMsg {
         /// Addresses to remove from the whitelist.
         remove_addresses: Vec<String>,
     },
+}
+
+impl ForceUnlockExecuteMsg {
+    /// Convert a [`ForceUnlockExecuteMsg`] into a [`CosmosMsg`].
+    pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
+        Ok(WasmMsg::Execute {
+            contract_addr,
+            msg: to_binary(&self)?,
+            funds,
+        }
+        .into())
+    }
 }

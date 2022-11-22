@@ -47,7 +47,7 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
 }
 
 impl VaultStandardExecuteMsg {
-    /// Convert a VaultStandardExecuteMsg into a [`CosmosMsg`].
+    /// Convert a [`VaultStandardExecuteMsg`] into a [`CosmosMsg`].
     pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr,
@@ -69,18 +69,6 @@ pub enum ExtensionExecuteMsg {
     Lockup(LockupExecuteMsg),
     #[cfg(feature = "force-unlock")]
     ForceUnlock(ForceUnlockExecuteMsg),
-}
-
-impl ExtensionExecuteMsg {
-    /// Convert an ExtensionExecuteMsg into a [`CosmosMsg`].
-    pub fn into_cosmos_msg(&self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
-        Ok(WasmMsg::Execute {
-            contract_addr,
-            msg: to_binary(&VaultStandardExecuteMsg::VaultExtension(self))?,
-            funds,
-        }
-        .into())
-    }
 }
 
 /// The default QueryMsg variants that all vaults must implement.
