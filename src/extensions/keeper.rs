@@ -1,5 +1,7 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::Addr;
+use cosmwasm_std::{to_binary, Addr, Coin, CosmosMsg, StdResult, WasmMsg};
+
+use crate::{ExtensionExecuteMsg, VaultStandardExecuteMsg};
 
 /// A job that can be performed by a keeper.
 #[cw_serde]
@@ -37,6 +39,20 @@ pub enum KeeperExecuteMsg {
         /// The ID of the job to execute
         job_id: u64,
     },
+}
+
+impl KeeperExecuteMsg {
+    /// Convert a [`KeeperExecuteMsg`] into a [`CosmosMsg`].
+    pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
+        Ok(WasmMsg::Execute {
+            contract_addr,
+            msg: to_binary(&VaultStandardExecuteMsg::VaultExtension(
+                ExtensionExecuteMsg::Keeper(self),
+            ))?,
+            funds,
+        }
+        .into())
+    }
 }
 
 /// Additional QueryMsg variants for vaults that enable the Keeper extension.

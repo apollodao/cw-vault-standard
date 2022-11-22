@@ -6,7 +6,7 @@ use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Empty, Uint128};
+use cosmwasm_std::{to_binary, Coin, CosmosMsg, Empty, StdResult, Uint128, WasmMsg};
 use schemars::JsonSchema;
 
 /// The default ExecuteMsg variants that all vaults must implement.
@@ -44,6 +44,18 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
 
     /// Called to execute functionality of any enabled extensions.
     VaultExtension(T),
+}
+
+impl VaultStandardExecuteMsg {
+    /// Convert a [`VaultStandardExecuteMsg`] into a [`CosmosMsg`].
+    pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
+        Ok(WasmMsg::Execute {
+            contract_addr,
+            msg: to_binary(&self)?,
+            funds,
+        }
+        .into())
+    }
 }
 
 /// Contains ExecuteMsgs of all enabled extensions. To enable extensions defined
