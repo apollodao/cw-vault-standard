@@ -29,6 +29,9 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// lockup extension is called, in which case the vault token has already
     /// been passed to ExecuteMsg::Unlock.
     Redeem {
+        /// Owner of the vault position.
+        /// This is required to allow withdrawing on behalf of another user.
+        owner: String,
         /// An optional field containing which address should receive the
         /// withdrawn base tokens. If not set, the caller address will be
         /// used instead.

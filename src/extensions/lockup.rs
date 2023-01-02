@@ -31,6 +31,9 @@ pub enum LockupExecuteMsg {
 
     /// Withdraw an unlocking position that has finished unlocking.
     WithdrawUnlocked {
+        /// Owner of the unlocked position.
+        /// This is required to allow withdrawing on behalf of another user.
+        owner: String,
         /// An optional field containing which address should receive the
         /// withdrawn base tokens. If not set, the caller address will be
         /// used instead.
