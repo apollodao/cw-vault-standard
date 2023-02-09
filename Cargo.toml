@@ -1,13 +1,13 @@
 [package]
-name = "cosmwasm-vault-standard"
+name = "cw-vault-standard"
 version = "0.2.0"
 edition = "2021"
 authors = ["Sturdy <sturdy@apollo.farm>"]
 license = "Apache-2.0"
 description = "A standard interface for tokenized vaults written in CosmWasm"
-homepage = "https://github.com/apollodao/cosmwasm-vault-standard/"
-documentation = "https://docs.rs/cosmwasm-vault-standard"
-repository = "https://github.com/apollodao/cosmwasm-vault-standard/"
+homepage = "https://github.com/apollodao/cw-vault-standard/"
+documentation = "https://docs.rs/cw-vault-standard"
+repository = "https://github.com/apollodao/cw-vault-standard/"
 readme = "README.md"
 
 [features]
