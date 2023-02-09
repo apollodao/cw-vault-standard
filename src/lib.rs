@@ -73,7 +73,7 @@
 //! use them, you can import the crate with a feature flag like this:
 //!
 //! ```toml
-//! cosmwasm-vault-standard = { version = "1.0.0", features = ["lockup", "force_unlock"] }
+//! cw-vault-standard = { version = "0.2.0", features = ["lockup", "force_unlock"] }
 //! ```
 //!
 //! A short description of each extension can be found below.

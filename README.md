@@ -15,7 +15,7 @@ The `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums define a set of 
 
 
 ## Description and specification of ExecuteMsg variants
-Please refer to the [API docs](https://docs.rs/cosmwasm-vault-standard) for a complete description of each variant.
+Please refer to the [API docs](https://docs.rs/cw-vault-standard) for a complete description of each variant.
 
 ## How to use Extensions
 
@@ -51,7 +51,7 @@ The following extensions are included in this repo:
 Each of these extensions are available in this repo via cargo features. To use them, you can import the crate with a feature flag like this:
 
 ```toml
-cosmwasm-vault-standard = { version = "1.0.0", features = ["lockup", "force_unlock"] }
+cw-vault-standard = { version = "0.2.0", features = ["lockup", "force_unlock"] }
 ```
 
 A short description of each extension can be found below.

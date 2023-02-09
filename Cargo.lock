@@ -134,18 +134,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cosmwasm-vault-standard"
-version = "0.2.0"
-dependencies = [
- "cosmwasm-schema",
- "cosmwasm-std",
- "cw-utils",
- "cw20",
- "schemars",
- "serde",
-]
-
-[[package]]
 name = "cpufeatures"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -219,6 +207,18 @@ dependencies = [
  "semver",
  "serde",
  "thiserror",
+]
+
+[[package]]
+name = "cw-vault-standard"
+version = "0.2.0"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cw-utils",
+ "cw20",
+ "schemars",
+ "serde",
 ]
 
 [[package]]
