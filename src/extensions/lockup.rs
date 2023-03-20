@@ -19,8 +19,6 @@ pub enum LockupExecuteMsg {
     /// Emits an event with type `UNLOCKING_POSITION_CREATED_EVENT_TYPE` with
     /// an attribute with key `UNLOCKING_POSITION_ATTR_KEY` containing an u64
     /// lockup_id.
-    /// Also encodes the u64 lockup ID as binary and returns it in the
-    /// Response's data field, so that it can be read by SubMsg replies.
     ///
     /// Like Redeem, this takes an amount so that the same API can be used for
     /// CW4626 and native tokens.
