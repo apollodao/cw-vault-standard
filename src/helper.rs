@@ -10,6 +10,9 @@ use crate::{
     VaultInfoResponse, VaultStandardExecuteMsg, VaultStandardInfoResponse, VaultStandardQueryMsg,
 };
 
+/// A helper struct to interact with a vault contract that adheres to the vault standard. This
+/// struct contains an unchecked address. By calling the `check` method, the address is checked
+/// against the api and the checked version of the struct is returned.
 pub struct VaultContractUnchecked<E, Q> {
     addr: String,
     execute_msg_extension: PhantomData<E>,
@@ -21,6 +24,7 @@ where
     E: Serialize,
     Q: Serialize + JsonSchema,
 {
+    /// Create a new VaultContractUnchecked instance.
     pub fn new(addr: &str) -> Self {
         Self {
             addr: addr.to_string(),
@@ -29,14 +33,19 @@ where
         }
     }
 
+    /// Check the address against the api and return a checked version of the struct.
     pub fn check(&self, api: &dyn Api) -> StdResult<VaultContract<E, Q>> {
         Ok(VaultContract::new(&api.addr_validate(&self.addr)?))
     }
 }
 
+/// A helper struct to interact with a vault contract that adheres to the vault standard.
 pub struct VaultContract<E, Q> {
+    /// The address of the vault contract.
     addr: Addr,
+    /// The extension enum for ExecuteMsg variants.
     execute_msg_extension: PhantomData<E>,
+    /// The extension enum for QueryMsg variants.
     query_msg_extension: PhantomData<Q>,
 }
 
