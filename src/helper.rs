@@ -1,5 +1,6 @@
 use std::marker::PhantomData;
 
+use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{
     coin, to_binary, Addr, Api, CosmosMsg, QuerierWrapper, StdResult, Uint128, WasmMsg,
 };
@@ -14,6 +15,7 @@ use crate::{
 /// A helper struct to interact with a vault contract that adheres to the vault standard. This
 /// struct contains an unchecked address. By calling the `check` method, the address is checked
 /// against the api and the checked version of the struct is returned.
+#[cw_serde]
 pub struct VaultContractUnchecked<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     addr: String,
     execute_msg_extension: PhantomData<E>,
@@ -41,6 +43,7 @@ where
 }
 
 /// A helper struct to interact with a vault contract that adheres to the vault standard.
+#[cw_serde]
 pub struct VaultContract<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     /// The address of the vault contract.
     addr: Addr,
