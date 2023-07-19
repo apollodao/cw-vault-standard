@@ -121,4 +121,8 @@ pub mod extensions;
 /// as QueryMsg response types.
 pub mod msg;
 
+/// Module containing a helper struct for interacting with a vault contract.
+pub mod helper;
+
+pub use helper::*;
 pub use msg::*;
