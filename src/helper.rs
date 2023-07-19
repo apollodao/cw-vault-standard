@@ -17,7 +17,7 @@ use crate::{
 /// against the api and the checked version of the struct is returned.
 #[cw_serde]
 pub struct VaultContractUnchecked<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
-    addr: String,
+    pub addr: String,
     execute_msg_extension: PhantomData<E>,
     query_msg_extension: PhantomData<Q>,
 }
@@ -46,7 +46,7 @@ where
 #[cw_serde]
 pub struct VaultContract<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     /// The address of the vault contract.
-    addr: Addr,
+    pub addr: Addr,
     /// The extension enum for ExecuteMsg variants.
     execute_msg_extension: PhantomData<E>,
     /// The extension enum for QueryMsg variants.
