@@ -72,14 +72,14 @@ where
         &self,
         amount: impl Into<Uint128>,
         base_denom: &str,
-        recipient: Option<impl Into<String>>,
+        recipient: Option<String>,
     ) -> StdResult<CosmosMsg> {
         let amount = amount.into();
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
             msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit {
                 amount: amount.clone(),
-                recipient: recipient.map(|r| r.into()),
+                recipient,
             })?,
             funds: vec![coin(amount.u128(), base_denom)],
         }
@@ -91,14 +91,14 @@ where
         &self,
         amount: impl Into<Uint128>,
         vault_token_denom: &str,
-        recipient: Option<impl Into<String>>,
+        recipient: Option<String>,
     ) -> StdResult<CosmosMsg> {
         let amount = amount.into();
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
             msg: to_binary(&VaultStandardExecuteMsg::<E>::Redeem {
                 amount: amount.clone(),
-                recipient: recipient.map(|r| r.into()),
+                recipient,
             })?,
             funds: vec![coin(amount.u128(), vault_token_denom)],
         }
