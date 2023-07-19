@@ -7,13 +7,14 @@ use schemars::JsonSchema;
 use serde::Serialize;
 
 use crate::{
-    VaultInfoResponse, VaultStandardExecuteMsg, VaultStandardInfoResponse, VaultStandardQueryMsg,
+    ExtensionExecuteMsg, ExtensionQueryMsg, VaultInfoResponse, VaultStandardExecuteMsg,
+    VaultStandardInfoResponse, VaultStandardQueryMsg,
 };
 
 /// A helper struct to interact with a vault contract that adheres to the vault standard. This
 /// struct contains an unchecked address. By calling the `check` method, the address is checked
 /// against the api and the checked version of the struct is returned.
-pub struct VaultContractUnchecked<E, Q> {
+pub struct VaultContractUnchecked<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     addr: String,
     execute_msg_extension: PhantomData<E>,
     query_msg_extension: PhantomData<Q>,
@@ -40,7 +41,7 @@ where
 }
 
 /// A helper struct to interact with a vault contract that adheres to the vault standard.
-pub struct VaultContract<E, Q> {
+pub struct VaultContract<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     /// The address of the vault contract.
     addr: Addr,
     /// The extension enum for ExecuteMsg variants.
