@@ -1,0 +1,30 @@
+[package]
+name            = "cw-vault-standard"
+description     = "A standard interface for tokenized vaults written in CosmWasm"
+documentation   = "https://docs.rs/cw-vault-standard"
+readme          = "README.md"
+version         = { workspace = true }
+edition         = { workspace = true }
+authors         = { workspace = true }
+license         = { workspace = true }
+homepage        = { workspace = true }
+repository      = { workspace = true }
+
+[features]
+default         = []
+lockup          = ["cw-utils"]
+force-unlock    = []
+keeper          = []
+cw4626          = ["cw20"]
+
+[package.metadata.docs.rs]
+all-features    = true
+rustdoc-args    = ["--cfg", "docsrs"]
+
+[dependencies]
+cosmwasm-std    = { workspace = true }
+schemars        = { workspace = true }
+serde           = { workspace = true }
+cosmwasm-schema = { workspace = true }
+cw-utils        = { workspace = true, optional = true }
+cw20            = { workspace = true, optional = true }
