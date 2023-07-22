@@ -1,0 +1,33 @@
+[package]
+name                = "cw-mock-vault"
+documentation       = "https://docs.rs/cw-mock-vault"
+description         = "A mock implementation of a vault that follows the cw-vault-standard"
+version             = { workspace = true }
+authors             = { workspace = true }
+edition             = { workspace = true }
+license             = { workspace = true }
+repository          = { workspace = true }
+homepage            = { workspace = true }
+keywords            = { workspace = true }
+
+[lib]
+crate-type          = ["cdylib", "rlib"]
+doctest             = false
+
+[features]
+# for more explicit tests, cargo test --features=backtraces
+backtraces          = ["cosmwasm-std/backtraces"]
+osmosis-test-tube   = ["cw-it/osmosis-test-tube"]
+
+[dependencies]
+cosmwasm-std        = { workspace = true }
+cw2                 = { workspace = true }
+mars-owner          = { workspace = true }
+osmosis-std         = { workspace = true }
+cw-vault-standard   = { workspace = true }
+cw-storage-plus     = { workspace = true }
+cosmwasm-schema     = { workspace = true }
+
+[dev-dependencies]
+cw-it               = { workspace = true, features = ["multi-test"] }
+proptest            = { workspace = true }
