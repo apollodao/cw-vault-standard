@@ -75,6 +75,7 @@ where
         recipient: Option<String>,
     ) -> StdResult<CosmosMsg> {
         let amount = amount.into();
+
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
             msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit {
@@ -82,6 +83,21 @@ where
                 recipient,
             })?,
             funds: vec![coin(amount.u128(), base_denom)],
+        }
+        .into())
+    }
+
+    /// Returns a CosmosMsg to deposit tokens into the vault, leaving the native funds field empty.
+    /// This is useful for depositing cw20 tokens. The caller should have approved spend for the
+    /// cw20 tokens first.
+    pub fn deposit_cw20(&self, amount: Uint128, recipient: Option<String>) -> StdResult<CosmosMsg> {
+        Ok(WasmMsg::Execute {
+            contract_addr: self.addr.to_string(),
+            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit {
+                amount: amount.clone(),
+                recipient,
+            })?,
+            funds: vec![],
         }
         .into())
     }
@@ -112,16 +128,13 @@ where
     ) -> StdResult<VaultStandardInfoResponse> {
         querier.query_wasm_smart(
             &self.addr,
-            &to_binary(&VaultStandardQueryMsg::<Q>::VaultStandardInfo {})?,
+            &VaultStandardQueryMsg::<Q>::VaultStandardInfo {},
         )
     }
 
     /// Queries the vault for the vault info
     pub fn query_vault_info(&self, querier: &QuerierWrapper) -> StdResult<VaultInfoResponse> {
-        querier.query_wasm_smart(
-            &self.addr,
-            &to_binary(&VaultStandardQueryMsg::<Q>::Info {})?,
-        )
+        querier.query_wasm_smart(&self.addr, &VaultStandardQueryMsg::<Q>::Info {})
     }
 
     /// Queries the vault for a preview of a deposit
@@ -132,9 +145,9 @@ where
     ) -> StdResult<Uint128> {
         querier.query_wasm_smart(
             &self.addr,
-            &to_binary(&VaultStandardQueryMsg::<Q>::PreviewDeposit {
+            &VaultStandardQueryMsg::<Q>::PreviewDeposit {
                 amount: amount.into(),
-            })?,
+            },
         )
     }
 
@@ -146,25 +159,22 @@ where
     ) -> StdResult<Uint128> {
         querier.query_wasm_smart(
             &self.addr,
-            &to_binary(&VaultStandardQueryMsg::<Q>::PreviewRedeem {
+            &VaultStandardQueryMsg::<Q>::PreviewRedeem {
                 amount: amount.into(),
-            })?,
+            },
         )
     }
 
     /// Queries the vault for the total assets held in the vault
     pub fn query_total_assets(&self, querier: &QuerierWrapper) -> StdResult<Uint128> {
-        querier.query_wasm_smart(
-            &self.addr,
-            &to_binary(&VaultStandardQueryMsg::<Q>::TotalAssets {})?,
-        )
+        querier.query_wasm_smart(&self.addr, &VaultStandardQueryMsg::<Q>::TotalAssets {})
     }
 
     /// Queries the vault for the total vault token supply
     pub fn query_total_vault_token_supply(&self, querier: &QuerierWrapper) -> StdResult<Uint128> {
         querier.query_wasm_smart(
             &self.addr,
-            &to_binary(&VaultStandardQueryMsg::<Q>::TotalVaultTokenSupply {})?,
+            &VaultStandardQueryMsg::<Q>::TotalVaultTokenSupply {},
         )
     }
 
@@ -176,9 +186,9 @@ where
     ) -> StdResult<Uint128> {
         querier.query_wasm_smart(
             &self.addr,
-            &to_binary(&VaultStandardQueryMsg::<Q>::ConvertToShares {
+            &VaultStandardQueryMsg::<Q>::ConvertToShares {
                 amount: amount.into(),
-            })?,
+            },
         )
     }
 
@@ -190,9 +200,9 @@ where
     ) -> StdResult<Uint128> {
         querier.query_wasm_smart(
             &self.addr,
-            &to_binary(&VaultStandardQueryMsg::<Q>::ConvertToAssets {
+            &VaultStandardQueryMsg::<Q>::ConvertToAssets {
                 amount: amount.into(),
-            })?,
+            },
         )
     }
 }
