@@ -127,18 +127,5 @@ pub mod helper;
 pub use helper::*;
 pub use msg::*;
 
+/// The version of the vault standard.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-pub fn active_features<'a>() -> Vec<&'a str> {
-    #[allow(unused_mut)]
-    let mut features = vec![];
-    #[cfg(feature = "lockup")]
-    features.push("lockup");
-    #[cfg(feature = "force_unlock")]
-    features.push("force_unlock");
-    #[cfg(feature = "keeper")]
-    features.push("keeper");
-    #[cfg(feature = "cw4626")]
-    features.push("cw4626");
-    features
-}
