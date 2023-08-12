@@ -5,9 +5,9 @@ members = [
 ]
 
 [workspace.package]
-version           = "0.4.0-rc.1"
+version           = "0.4.0-rc.2"
 edition           = "2021"
-authors           = ["Sturdy <sturdy@apollo.farm>"]
+authors           = ["Sturdy <sturdy@apollo.farm>", "Pacman <pacman@apollo.farm>"]
 license           = "Apache-2.0"
 homepage          = "https://github.com/apollodao/cw-vault-standard/"
 repository        = "https://github.com/apollodao/cw-vault-standard/"
@@ -24,8 +24,8 @@ cw-storage-plus                 = "1.1.0"
 cw2                             = "1.1.0"
 mars-owner                      = "2.0.0"
 osmosis-std                     = "0.16.1"
-cw-vault-standard               = { path = "./cw-vault-standard" }
-cw-vault-standard-test-helpers  = { path = "./test-helpers" }
+cw-vault-standard               = { version = "0.4.0-rc.2", path = "./cw-vault-standard" }
+cw-vault-standard-test-helpers  = { version = "0.4.0-rc.2", path = "./test-helpers" }
 
 # dev dependencies
 cw-it             = "0.1"
