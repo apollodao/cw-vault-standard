@@ -10,3 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Adds helper module with helper structs `VaultContract` and `VaultContractUnchecked`.
+
+## [0.3.2] - 2023-08-12
+
+### Added
+
+- Export `const VERSION` and `fn active_features() -> Vec<String>`.
