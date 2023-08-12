@@ -16,3 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Export `const VERSION`.
+
+## [0.4.0] - 2023-08-12
+
+### Changed
+
+- Changes type of `VaultStandardInfoResponse::version` from `u16` to `String`
