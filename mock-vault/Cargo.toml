@@ -27,7 +27,7 @@ osmosis-std         = { workspace = true }
 cw-vault-standard   = { workspace = true }
 cw-storage-plus     = { workspace = true }
 cosmwasm-schema     = { workspace = true }
+cw-it               = { workspace = true, features = ["multi-test"] }
 
 [dev-dependencies]
-cw-it               = { workspace = true, features = ["multi-test"] }
 proptest            = { workspace = true }

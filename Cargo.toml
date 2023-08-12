@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "cw-vault-standard",
-    "mock-vault"
+    "mock-vault",
 ]
 
 [workspace.package]

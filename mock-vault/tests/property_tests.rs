@@ -1,11 +1,12 @@
+use cosmwasm_std::coin;
 use cosmwasm_std::Decimal;
 use cw_it::robot::TestRobot;
 use cw_it::test_tube::Account;
 use cw_it::traits::CwItRunner;
+use cw_mock_vault::test_helpers;
+use cw_mock_vault::test_helpers::VaultRobot;
 use proptest::prelude::*;
 use proptest::proptest;
-
-mod test_helpers;
 
 proptest! {
         #![proptest_config(ProptestConfig {
@@ -29,7 +30,7 @@ proptest! {
         let admin = &accs[0];
         let user1 = &accs[1];
         let user2 = &accs[2];
-        let robot = test_helpers::VaultRobot::new(&runner, admin, "uosmo");
+        let robot = test_helpers::DefaultVaultRobot::instantiate(&runner, admin, "uosmo", Some(coin(10000000, "uosmo")));
 
         if init_amount != 0 {
             robot
