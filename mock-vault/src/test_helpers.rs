@@ -8,6 +8,7 @@ use cw_it::robot::TestRobot;
 use cw_it::test_tube::{Account, Module, SigningAccount, Wasm};
 use cw_it::traits::CwItRunner;
 use cw_it::{Artifact, ContractType, TestRunner};
+use cw_vault_standard_test_helpers::traits::CwVaultStandardRobot;
 
 pub const MOCK_VAULT_TOKEN_SUBDENOM: &str = "vault-token";
 
@@ -70,44 +71,32 @@ pub fn assert_almost_eq(left: Decimal, right: Decimal, max_rel_diff: &str) {
     }
 }
 
-/// A trait implementing common methods for testing vault contracts.
-pub trait VaultRobot<'a, R>: TestRobot<'a, R>
-where
-    R: CwItRunner<'a> + 'a,
-{
-    /// Create a new default instance of the robot.
-    fn default_vault_robot(
-        runner: &'a R,
-        admin: &'a SigningAccount,
-        base_token: String,
-        vault_token: String,
-        vault_addr: String,
-    ) -> DefaultVaultRobot<'a, R> {
-        DefaultVaultRobot {
-            runner,
-            admin,
-            base_token,
-            vault_token,
-            vault_addr,
-        }
+/// A simple testing robot for testing vault contracts.
+pub struct MockVaultRobot<'a, R: CwItRunner<'a>> {
+    pub runner: &'a R,
+    pub admin: &'a SigningAccount,
+    pub vault_addr: String,
+}
+
+impl<'a, R: CwItRunner<'a>> CwVaultStandardRobot<'a, R> for MockVaultRobot<'a, R> {
+    fn vault_addr(&self) -> String {
+        self.vault_addr.clone()
     }
 
-    /// Returns the base token.
-    fn base_token(&self) -> &str;
+    fn query_base_token_balance(&self, address: impl Into<String>) -> Uint128 {
+        let base_token_denom = self.base_token();
+        self.query_native_token_balance(address, base_token_denom)
+    }
+}
 
-    /// Returns the vault token.
-    fn vault_token(&self) -> &str;
-
-    /// Returns the vault address.
-    fn vault_addr(&self) -> &str;
-
+impl<'a, R: CwItRunner<'a>> MockVaultRobot<'a, R> {
     /// Uploads and instantiates the vault contract and returns a new instance of the robot.
-    fn instantiate(
+    pub fn instantiate(
         runner: &'a R,
         admin: &'a SigningAccount,
         base_token: &str,
         denom_creation_fee: Option<Coin>,
-    ) -> DefaultVaultRobot<'a, R>
+    ) -> MockVaultRobot<'a, R>
     where
         Self: Sized,
     {
@@ -132,104 +121,16 @@ where
             .data
             .address;
 
-        let vault_token = format!("factory/{}/{}", vault_addr, MOCK_VAULT_TOKEN_SUBDENOM);
-
-        Self::default_vault_robot(
+        MockVaultRobot {
             runner,
             admin,
-            base_token.to_string(),
-            vault_token,
             vault_addr,
-        )
-    }
-
-    /// Deposit base tokens into the vault and return a reference to the robot.
-    fn deposit_to_vault(&self, amount: impl Into<Uint128>, signer: &SigningAccount) -> &Self {
-        let amount: Uint128 = amount.into();
-
-        let msg = crate::msg::ExecuteMsg::Deposit {
-            amount,
-            recipient: None,
-        };
-        self.wasm()
-            .execute(
-                self.vault_addr(),
-                &msg,
-                &[coin(amount.u128(), self.base_token())],
-                signer,
-            )
-            .unwrap();
-
-        self
-    }
-
-    /// Deposit base tokens into the vault without filling the native token funds field and return
-    /// a reference to the robot. This is useful for depositing cw20 tokens.
-    fn deposit_cw20_to_vault(&self, amount: impl Into<Uint128>, signer: &SigningAccount) -> &Self {
-        let amount: Uint128 = amount.into();
-
-        let msg = crate::msg::ExecuteMsg::Deposit {
-            amount,
-            recipient: None,
-        };
-        self.wasm()
-            .execute(self.vault_addr(), &msg, &[], signer)
-            .unwrap();
-
-        self
-    }
-
-    /// Redeem vault tokens from the vault and return a reference to the robot.
-    fn redeem_from_vault(&self, amount: impl Into<Uint128>, signer: &SigningAccount) -> &Self {
-        let amount: Uint128 = amount.into();
-
-        let msg = crate::msg::ExecuteMsg::Redeem {
-            amount,
-            recipient: None,
-        };
-        self.wasm()
-            .execute(
-                self.vault_addr(),
-                &msg,
-                &[coin(amount.u128(), self.vault_token())],
-                signer,
-            )
-            .unwrap();
-
-        self
-    }
-
-    /// Query the vault token balance of the given account.
-    fn query_vault_token_balance(&self, account: impl Into<String>) -> Uint128 {
-        self.query_native_token_balance(account, self.vault_token())
+        }
     }
 }
 
-/// A simple testing robot for testing vault contracts.
-pub struct DefaultVaultRobot<'a, R: CwItRunner<'a>> {
-    pub runner: &'a R,
-    pub admin: &'a SigningAccount,
-    pub vault_addr: String,
-    pub base_token: String,
-    pub vault_token: String,
-}
-
-impl<'a, R: CwItRunner<'a>> TestRobot<'a, R> for DefaultVaultRobot<'a, R> {
+impl<'a, R: CwItRunner<'a>> TestRobot<'a, R> for MockVaultRobot<'a, R> {
     fn runner(&self) -> &'a R {
         self.runner
-    }
-}
-
-impl<'a, R: CwItRunner<'a>> VaultRobot<'a, R> for DefaultVaultRobot<'a, R> {
-    fn base_token(&self) -> &str {
-        &self.base_token
-    }
-
-    fn vault_token(&self) -> &str {
-        &self.vault_token
-    }
-
-    fn vault_addr(&self) -> &str {
-        &self.vault_addr
     }
 }

@@ -1,0 +1,17 @@
+[package]
+name        = "cw-vault-standard-test-helpers"
+version     = { workspace = true }
+edition     = "2018"
+
+[features]
+default = ["lockup", "force-unlock"]
+lockup = ["cw-vault-standard/lockup"]
+force-unlock = ["cw-vault-standard/force-unlock"]
+
+
+
+[dependencies]
+cosmwasm-std        = { workspace = true }
+cw-vault-standard   = { workspace = true }
+cw-utils            = { workspace = true }
+cw-it               = { workspace = true }

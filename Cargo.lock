@@ -541,6 +541,7 @@ dependencies = [
  "cw-it",
  "cw-storage-plus",
  "cw-vault-standard",
+ "cw-vault-standard-test-helpers",
  "cw2",
  "mars-owner",
  "osmosis-std",
@@ -583,6 +584,16 @@ dependencies = [
  "cw20",
  "schemars",
  "serde",
+]
+
+[[package]]
+name = "cw-vault-standard-test-helpers"
+version = "0.3.2"
+dependencies = [
+ "cosmwasm-std",
+ "cw-it",
+ "cw-utils",
+ "cw-vault-standard",
 ]
 
 [[package]]

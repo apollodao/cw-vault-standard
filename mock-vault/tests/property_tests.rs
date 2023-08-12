@@ -1,10 +1,9 @@
 use cosmwasm_std::coin;
 use cosmwasm_std::Decimal;
-use cw_it::robot::TestRobot;
 use cw_it::test_tube::Account;
 use cw_it::traits::CwItRunner;
 use cw_mock_vault::test_helpers;
-use cw_mock_vault::test_helpers::VaultRobot;
+use cw_vault_standard_test_helpers::traits::CwVaultStandardRobot;
 use proptest::prelude::*;
 use proptest::proptest;
 
@@ -30,17 +29,17 @@ proptest! {
         let admin = &accs[0];
         let user1 = &accs[1];
         let user2 = &accs[2];
-        let robot = test_helpers::DefaultVaultRobot::instantiate(&runner, admin, "uosmo", Some(coin(10000000, "uosmo")));
+        let base_token = "uosmo";
+        let robot = test_helpers::MockVaultRobot::instantiate(&runner, admin, base_token, Some(coin(10000000, "uosmo")));
 
         if init_amount != 0 {
             robot
-            .send_native_tokens(admin, &robot.vault_addr, init_amount, "uosmo")
-            .deposit_to_vault(init_amount, admin);
+            .deposit(init_amount, None, &[coin(init_amount, base_token)],  &admin);
         }
 
         robot
-            .deposit_to_vault(amount1, user1)
-            .deposit_to_vault(amount2, user2);
+            .deposit(amount1, None, &[coin(amount1, base_token)], user1)
+            .deposit(amount2, None, &[coin(amount2, base_token)], user2);
 
         let user1_vault_token_balance = robot.query_vault_token_balance(user1.address());
         let user2_vault_token_balance = robot.query_vault_token_balance(user2.address());

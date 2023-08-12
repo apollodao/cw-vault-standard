@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "cw-vault-standard",
+    "test-helpers",
     "mock-vault",
 ]
 
@@ -25,9 +26,10 @@ cw2               = "1.1.0"
 mars-owner        = "2.0.0"
 osmosis-std       = "0.16.1"
 cw-vault-standard = { path = "./cw-vault-standard" }
+cw-vault-standard-test-helpers = { path = "./test-helpers" }
 
 # dev dependencies
-cw-it             = "0.1.0"
+cw-it             = "0.1"
 proptest          = "1.2.0"
 
 
