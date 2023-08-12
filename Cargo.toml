@@ -7,7 +7,7 @@ resolver = "2"
 
 [workspace.package]
 edition           = "2021"
-authors           = ["Sturdy <sturdy@apollo.farm>"]
+authors           = ["Sturdy <sturdy@apollo.farm>", "Pacman <pacman@apollo.farm>"]
 license           = "Apache-2.0"
 homepage          = "https://github.com/apollodao/cw-vault-standard/"
 repository        = "https://github.com/apollodao/cw-vault-standard/"
