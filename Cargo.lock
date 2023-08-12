@@ -430,7 +430,7 @@ dependencies = [
 
 [[package]]
 name = "cw-vault-standard"
-version = "0.3.2-rc.1"
+version = "0.3.3-rc.1"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -442,7 +442,7 @@ dependencies = [
 
 [[package]]
 name = "cw-vault-standard-test-helpers"
-version = "0.3.2-rc.1"
+version = "0.3.3-rc.1"
 dependencies = [
  "cosmwasm-std",
  "cw-it",
