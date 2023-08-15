@@ -9,13 +9,10 @@ homepage    = { workspace = true }
 repository  = { workspace = true }
 keywords    = { workspace = true }
 
-
 [features]
 default = ["lockup", "force-unlock"]
 lockup = ["cw-vault-standard/lockup"]
 force-unlock = ["cw-vault-standard/force-unlock"]
-
-
 
 [dependencies]
 cosmwasm-std        = { workspace = true }
