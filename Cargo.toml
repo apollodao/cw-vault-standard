@@ -23,7 +23,7 @@ cw-storage-plus                 = "1.1.0"
 cw2                             = "1.1.0"
 mars-owner                      = "2.0.0"
 osmosis-std                     = "0.16.1"
-cw-vault-standard               = { version = "0.3.3", path = "./cw-vault-standard" }
+cw-vault-standard               = { version = "0.4.0", path = "./cw-vault-standard" }
 cw-vault-standard-test-helpers  = { version = "0.3.3", path = "./test-helpers" }
 
 # dev dependencies

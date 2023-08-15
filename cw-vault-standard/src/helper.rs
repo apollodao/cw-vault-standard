@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{
-    coin, to_binary, Addr, Api, CosmosMsg, QuerierWrapper, StdResult, Uint128, WasmMsg,
+    coin, to_binary, Addr, CosmosMsg, Deps, QuerierWrapper, StdResult, Uint128, WasmMsg,
 };
 use schemars::JsonSchema;
 use serde::Serialize;
@@ -37,10 +37,9 @@ where
         }
     }
 
-    /// Check the address against the api and return a checked version of the
-    /// struct.
-    pub fn check(&self, api: &dyn Api) -> StdResult<VaultContract<E, Q>> {
-        Ok(VaultContract::new(&api.addr_validate(&self.addr)?))
+    /// Check the address against the api and return a checked version of the struct.
+    pub fn check(&self, deps: Deps) -> StdResult<VaultContract<E, Q>> {
+        VaultContract::new(&deps.querier, &deps.api.addr_validate(&self.addr)?)
     }
 }
 
@@ -50,6 +49,10 @@ where
 pub struct VaultContract<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     /// The address of the vault contract.
     pub addr: Addr,
+    /// The base token of the vault contract.
+    pub base_token: String,
+    /// The vault token denom of the vault contract.
+    pub vault_token: String,
     /// The extension enum for ExecuteMsg variants.
     execute_msg_extension: PhantomData<E>,
     /// The extension enum for QueryMsg variants.
@@ -62,27 +65,35 @@ where
     Q: Serialize + JsonSchema,
 {
     /// Create a new VaultContract instance.
-    pub fn new(addr: &Addr) -> Self {
-        Self {
+    pub fn new(querier: &QuerierWrapper, addr: &Addr) -> StdResult<Self> {
+        // Query vault info
+        let vault_info: VaultInfoResponse =
+            querier.query_wasm_smart(addr, &VaultStandardQueryMsg::<Q>::Info {})?;
+
+        Ok(Self {
             addr: addr.clone(),
+            base_token: vault_info.base_token,
+            vault_token: vault_info.vault_token,
             execute_msg_extension: PhantomData,
             query_msg_extension: PhantomData,
-        }
+        })
     }
 
     /// Returns a CosmosMsg to deposit base tokens into the vault.
     pub fn deposit(
         &self,
         amount: impl Into<Uint128>,
-        base_denom: &str,
         recipient: Option<String>,
     ) -> StdResult<CosmosMsg> {
         let amount = amount.into();
 
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
-            funds: vec![coin(amount.u128(), base_denom)],
+            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit {
+                amount: amount.clone(),
+                recipient,
+            })?,
+            funds: vec![coin(amount.u128(), &self.base_token)],
         }
         .into())
     }
@@ -103,14 +114,16 @@ where
     pub fn redeem(
         &self,
         amount: impl Into<Uint128>,
-        vault_token_denom: &str,
         recipient: Option<String>,
     ) -> StdResult<CosmosMsg> {
         let amount = amount.into();
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Redeem { amount, recipient })?,
-            funds: vec![coin(amount.u128(), vault_token_denom)],
+            msg: to_binary(&VaultStandardExecuteMsg::<E>::Redeem {
+                amount: amount.clone(),
+                recipient,
+            })?,
+            funds: vec![coin(amount.u128(), &self.vault_token)],
         }
         .into())
     }
