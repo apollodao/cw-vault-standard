@@ -17,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changes type of `VaultStandardInfoResponse::version` from `u16` to `String`
 - Add `base_token` and `vault_token` fields to `VaultContract` helper struct.
 
 ## [0.3.2] - 2023-08-12
