@@ -1,4 +1,4 @@
-use cosmwasm_std::{Coin, Uint128};
+use cosmwasm_std::{coin, Coin, Uint128};
 use cw_it::test_tube::{Runner, SigningAccount};
 
 use cw_utils::Duration;
@@ -36,10 +36,7 @@ pub trait LockedVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> 
         self.unlock_with_funds(
             amount.clone(),
             signer,
-            &[Coin {
-                amount,
-                denom: info.vault_token,
-            }],
+            &[coin(amount.u128(), info.vault_token)],
         )
     }
 

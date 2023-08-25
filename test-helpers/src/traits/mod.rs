@@ -4,7 +4,7 @@ pub mod lockup;
 #[cfg(feature = "force-unlock")]
 pub mod force_unlock;
 
-use cosmwasm_std::{Coin, Empty, Uint128};
+use cosmwasm_std::{coin, Coin, Empty, Uint128};
 use cw_it::robot::TestRobot;
 use cw_it::test_tube::{Account, Runner, SigningAccount};
 
@@ -92,16 +92,31 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
         self
     }
 
-    fn redeem(&self, amount: Uint128, recipient: Option<String>, signer: &SigningAccount) -> &Self {
+    fn redeem_with_funds(
+        &self,
+        amount: Uint128,
+        recipient: Option<String>,
+        funds: &[Coin],
+        signer: &SigningAccount,
+    ) -> &Self {
         self.wasm()
             .execute(
                 &self.vault_addr(),
                 &ExecuteMsg::<Empty>::Redeem { amount, recipient },
-                &[],
+                funds,
                 signer,
             )
             .unwrap();
         self
+    }
+
+    fn redeem(&self, amount: Uint128, recipient: Option<String>, signer: &SigningAccount) -> &Self {
+        self.redeem_with_funds(
+            amount,
+            recipient,
+            &[coin(amount.u128(), self.vault_token())],
+            signer,
+        )
     }
 
     fn redeem_all(&self, recipient: Option<String>, signer: &SigningAccount) -> &Self {
