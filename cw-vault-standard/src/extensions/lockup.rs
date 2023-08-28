@@ -29,9 +29,10 @@ pub enum LockupExecuteMsg {
 
     /// EmergencyUnlock is called to initiate unlocking a locked position held
     /// by the vault.
-    /// This call should simply unlock `amount` of vault tokens, without performing
-    /// any other side effects that might cause the transaction to fail. Such
-    /// as for example compoundning rewards for an LP position.
+    /// This call should simply unlock `amount` of vault tokens, without
+    /// performing any other side effects that might cause the transaction
+    /// to fail. Such as for example compoundning rewards for an LP
+    /// position.
     EmergencyUnlock {
         /// The amount of vault tokens to unlock.
         amount: Uint128,

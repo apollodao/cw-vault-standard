@@ -1,5 +1,6 @@
 use cosmwasm_std::{coin, Coin, Uint128};
-use cw_it::test_tube::{Runner, SigningAccount};
+use cw_it::helpers::Unwrap;
+use cw_it::test_tube::{Account, Runner, SigningAccount};
 
 use cw_utils::Duration;
 use cw_vault_standard::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg, UnlockingPosition};
@@ -9,59 +10,71 @@ use cw_vault_standard::{ExtensionExecuteMsg, ExtensionQueryMsg, VaultStandardQue
 use super::CwVaultStandardRobot;
 
 pub trait LockedVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> {
+    /// Calls `ExecuteMsg::Unlock` with the given amount and funds.
     fn unlock_with_funds(
         &self,
         amount: impl Into<Uint128>,
-        signer: &SigningAccount,
         funds: &[Coin],
+        unwrap_choice: Unwrap,
+        signer: &SigningAccount,
     ) -> &Self {
-        self.wasm()
-            .execute(
-                &self.vault_addr(),
-                &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::Lockup(
-                    LockupExecuteMsg::Unlock {
-                        amount: amount.into(),
-                    },
-                )),
-                funds,
-                signer,
-            )
-            .unwrap();
+        unwrap_choice.unwrap(self.wasm().execute(
+            &self.vault_addr(),
+            &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::Lockup(LockupExecuteMsg::Unlock {
+                amount: amount.into(),
+            })),
+            funds,
+            signer,
+        ));
         self
     }
 
-    fn unlock(&self, amount: impl Into<Uint128>, signer: &SigningAccount) -> &Self {
+    /// Calls `ExecuteMsg::Unlock` with the given amount and the correct native coins in the funds field.
+    fn unlock(
+        &self,
+        amount: impl Into<Uint128>,
+        unwrap_choice: Unwrap,
+        signer: &SigningAccount,
+    ) -> &Self {
         let info = self.query_info();
         let amount: Uint128 = amount.into();
         self.unlock_with_funds(
-            amount.clone(),
-            signer,
+            amount,
             &[coin(amount.u128(), info.vault_token)],
+            unwrap_choice,
+            signer,
         )
     }
 
+    /// Calls `ExecuteMsg::Unlock` with the all of the account's vault tokens.
+    fn unlock_all(&self, unwrap_choice: Unwrap, signer: &SigningAccount) -> &Self {
+        let amount = self.query_vault_token_balance(signer.address());
+        self.unlock(amount, unwrap_choice, signer)
+    }
+
+    /// Calls `ExecuteMsg::WithdrawUnlocked` to withdraw tokens from a lockup position.
     fn withdraw_unlocked(
         &self,
         lockup_id: u64,
         recipient: Option<String>,
+        unwrap_choice: Unwrap,
         signer: &SigningAccount,
     ) -> &Self {
-        self.wasm()
-            .execute(
-                &self.vault_addr(),
-                &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::Lockup(
-                    LockupExecuteMsg::WithdrawUnlocked {
-                        lockup_id,
-                        recipient,
-                    },
-                )),
-                &[],
-                signer,
-            )
-            .unwrap();
+        unwrap_choice.unwrap(self.wasm().execute(
+            &self.vault_addr(),
+            &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::Lockup(
+                LockupExecuteMsg::WithdrawUnlocked {
+                    lockup_id,
+                    recipient,
+                },
+            )),
+            &[],
+            signer,
+        ));
         self
     }
 
+    /// Queries the vault for all unlocking positions of the given address (with optional pagination).
     fn query_unlocking_positions(
         &self,
         address: impl Into<String>,
@@ -82,6 +95,7 @@ pub trait LockedVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> 
             .unwrap()
     }
 
+    /// Queries the vault for a single unlocking position.
     fn query_unlocking_position(&self, lockup_id: u64) -> UnlockingPosition {
         self.wasm()
             .query(
@@ -93,6 +107,7 @@ pub trait LockedVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> 
             .unwrap()
     }
 
+    /// Queries the vault for the lockup duration.
     fn query_lockup_duration(&self) -> Duration {
         self.wasm()
             .query(
@@ -104,6 +119,7 @@ pub trait LockedVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> 
             .unwrap()
     }
 
+    /// Asserts that the number of unlocking positions in the vault is equal to the given value.
     fn assert_number_of_unlocking_positions(
         &self,
         address: impl Into<String>,
@@ -115,6 +131,7 @@ pub trait LockedVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> 
         self
     }
 
+    /// Asserts that an unlocking position at the given id is equal to the given value.
     fn assert_unlocking_position_eq(&self, lockup_id: u64, expected: UnlockingPosition) -> &Self {
         let position = self.query_unlocking_position(lockup_id);
         assert_eq!(position, expected);

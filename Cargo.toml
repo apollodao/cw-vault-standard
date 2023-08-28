@@ -5,7 +5,7 @@ members = [
 ]
 
 [workspace.package]
-version           = "0.3.3-rc.2"
+version           = "0.3.3-rc.3"
 edition           = "2021"
 authors           = ["Sturdy <sturdy@apollo.farm>"]
 license           = "Apache-2.0"
@@ -25,10 +25,10 @@ cw2                             = "1.1.0"
 mars-owner                      = "2.0.0"
 osmosis-std                     = "0.16.1"
 cw-vault-standard               = { version = "0.3.3-rc.1", path = "./cw-vault-standard" }
-cw-vault-standard-test-helpers  = { version = "0.3.3-rc.2", path = "./test-helpers" }
+cw-vault-standard-test-helpers  = { version = "0.3.3-rc.3", path = "./test-helpers" }
 
 # dev dependencies
-cw-it             = "0.1"
+cw-it             = "0.2.0-rc.3"
 proptest          = "1.2.0"
 
 

@@ -384,9 +384,9 @@ dependencies = [
 
 [[package]]
 name = "cw-it"
-version = "0.1.0"
+version = "0.2.0-rc.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e3120d46b30b900c4b9ab0f996ce527c1187095c75ffa61d9ea5aa6d1e93b41"
+checksum = "f746bf1c2b142e3a7ec38935ca64cd5c6388b441e24754a7eac66143ae867805"
 dependencies = [
  "anyhow",
  "config",
@@ -430,7 +430,7 @@ dependencies = [
 
 [[package]]
 name = "cw-vault-standard"
-version = "0.3.3-rc.2"
+version = "0.3.3-rc.3"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -442,7 +442,7 @@ dependencies = [
 
 [[package]]
 name = "cw-vault-standard-test-helpers"
-version = "0.3.3-rc.2"
+version = "0.3.3-rc.3"
 dependencies = [
  "cosmwasm-std",
  "cw-it",
@@ -1192,9 +1192,9 @@ dependencies = [
 
 [[package]]
 name = "osmosis-std"
-version = "0.16.2"
+version = "0.17.0-rc0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75895e4db1a81ca29118e366365744f64314938327e4eedba8e6e462fb15e94f"
+checksum = "c0b022b748710ecdf1adc6a124c3bef29f17ef05e7fa1260a08889d1d53f9cc5"
 dependencies = [
  "chrono",
  "cosmwasm-std",
@@ -1966,9 +1966,9 @@ dependencies = [
 
 [[package]]
 name = "test-tube"
-version = "0.1.5"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a520f35c8ca6665ea5231a81ce9110f49a6901a1cbedb751e72859e83320bfea"
+checksum = "09b1f7cafdf7738331999fb1465d2d3032f08ac61940e1ef4601dbbef21d6a5e"
 dependencies = [
  "base64",
  "cosmrs",
