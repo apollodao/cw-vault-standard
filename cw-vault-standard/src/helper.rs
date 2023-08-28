@@ -12,9 +12,10 @@ use crate::{
     VaultStandardInfoResponse, VaultStandardQueryMsg,
 };
 
-/// A helper struct to interact with a vault contract that adheres to the vault standard. This
-/// struct contains an unchecked address. By calling the `check` method, the address is checked
-/// against the api and the checked version of the struct is returned.
+/// A helper struct to interact with a vault contract that adheres to the vault
+/// standard. This struct contains an unchecked address. By calling the `check`
+/// method, the address is checked against the api and the checked version of
+/// the struct is returned.
 #[cw_serde]
 pub struct VaultContractUnchecked<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     pub addr: String,
@@ -36,13 +37,15 @@ where
         }
     }
 
-    /// Check the address against the api and return a checked version of the struct.
+    /// Check the address against the api and return a checked version of the
+    /// struct.
     pub fn check(&self, api: &dyn Api) -> StdResult<VaultContract<E, Q>> {
         Ok(VaultContract::new(&api.addr_validate(&self.addr)?))
     }
 }
 
-/// A helper struct to interact with a vault contract that adheres to the vault standard.
+/// A helper struct to interact with a vault contract that adheres to the vault
+/// standard.
 #[cw_serde]
 pub struct VaultContract<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     /// The address of the vault contract.
@@ -78,25 +81,19 @@ where
 
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit {
-                amount: amount.clone(),
-                recipient,
-            })?,
+            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
             funds: vec![coin(amount.u128(), base_denom)],
         }
         .into())
     }
 
-    /// Returns a CosmosMsg to deposit tokens into the vault, leaving the native funds field empty.
-    /// This is useful for depositing cw20 tokens. The caller should have approved spend for the
-    /// cw20 tokens first.
+    /// Returns a CosmosMsg to deposit tokens into the vault, leaving the native
+    /// funds field empty. This is useful for depositing cw20 tokens. The
+    /// caller should have approved spend for the cw20 tokens first.
     pub fn deposit_cw20(&self, amount: Uint128, recipient: Option<String>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit {
-                amount: amount.clone(),
-                recipient,
-            })?,
+            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
             funds: vec![],
         }
         .into())
@@ -112,10 +109,7 @@ where
         let amount = amount.into();
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Redeem {
-                amount: amount.clone(),
-                recipient,
-            })?,
+            msg: to_binary(&VaultStandardExecuteMsg::<E>::Redeem { amount, recipient })?,
             funds: vec![coin(amount.u128(), vault_token_denom)],
         }
         .into())
