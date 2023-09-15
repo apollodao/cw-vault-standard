@@ -5,7 +5,7 @@ members = [
 ]
 
 [workspace.package]
-version           = "0.3.3-rc.3"
+version           = "0.3.3-rc.4"
 edition           = "2021"
 authors           = ["Sturdy <sturdy@apollo.farm>"]
 license           = "Apache-2.0"

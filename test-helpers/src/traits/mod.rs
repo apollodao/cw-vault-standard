@@ -85,39 +85,6 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
         self.deposit(amount, recipient, unwrap_choice, signer)
     }
 
-    /// Queries the base token balance of the given address.
-    fn query_base_token_balance(&self, address: impl Into<String>) -> Uint128;
-
-    /// Asserts that the base token balance of the given address is equal to the given amount.
-    fn assert_base_token_balance_eq(
-        &self,
-        address: impl Into<String>,
-        amount: impl Into<Uint128>,
-    ) -> &Self {
-        let amount: Uint128 = amount.into();
-        let balance = self.query_base_token_balance(address);
-        assert_eq!(balance, amount);
-        self
-    }
-
-    /// Queries the native token balance of the given address.
-    fn query_vault_token_balance(&self, address: impl Into<String>) -> Uint128 {
-        let info = self.query_info();
-        self.query_native_token_balance(address, info.vault_token)
-    }
-
-    /// Asserts that the vault token balance of the given address is equal to the given amount.
-    fn assert_vault_token_balance_eq(
-        &self,
-        address: impl Into<String>,
-        amount: impl Into<Uint128>,
-    ) -> &Self {
-        let amount: Uint128 = amount.into();
-        let balance = self.query_vault_token_balance(address);
-        assert_eq!(balance, amount);
-        self
-    }
-
     /// Calls `ExecuteMsg::Redeem` with the given amount and funds.
     fn redeem_with_funds(
         &self,
@@ -163,5 +130,90 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
         let amount =
             self.query_native_token_balance(signer.address(), self.query_info().vault_token);
         self.redeem(amount, recipient, unwrap_choice, signer)
+    }
+
+    /////// QUERIES ///////
+
+    /// Queries the base token balance of the given address.
+    fn query_base_token_balance(&self, address: impl Into<String>) -> Uint128;
+
+    /// Queries the native token balance of the given address.
+    fn query_vault_token_balance(&self, address: impl Into<String>) -> Uint128 {
+        let info = self.query_info();
+        self.query_native_token_balance(address, info.vault_token)
+    }
+
+    /////// ASSERTIONS ///////
+
+    /// Asserts that the base token balance of the given address is equal to the given amount.
+    fn assert_base_token_balance_eq(
+        &self,
+        address: impl Into<String>,
+        amount: impl Into<Uint128>,
+    ) -> &Self {
+        let amount: Uint128 = amount.into();
+        let balance = self.query_base_token_balance(address);
+        assert_eq!(balance, amount);
+        self
+    }
+
+    /// Asserts that the base token balance of the given address is greater than the given amount.
+    fn assert_base_token_balance_gt(
+        &self,
+        address: impl Into<String>,
+        amount: impl Into<Uint128>,
+    ) -> &Self {
+        let amount: Uint128 = amount.into();
+        let balance = self.query_base_token_balance(address);
+        assert!(balance > amount);
+        self
+    }
+
+    /// Asserts that the base token balance of the given address is less than the given amount.
+    fn assert_base_token_balance_lt(
+        &self,
+        address: impl Into<String>,
+        amount: impl Into<Uint128>,
+    ) -> &Self {
+        let amount: Uint128 = amount.into();
+        let balance = self.query_base_token_balance(address);
+        assert!(balance < amount);
+        self
+    }
+
+    /// Asserts that the vault token balance of the given address is equal to the given amount.
+    fn assert_vault_token_balance_eq(
+        &self,
+        address: impl Into<String>,
+        amount: impl Into<Uint128>,
+    ) -> &Self {
+        let amount: Uint128 = amount.into();
+        let balance = self.query_vault_token_balance(address);
+        assert_eq!(balance, amount);
+        self
+    }
+
+    /// Asserts that the vault token balance of the given address is greater than the given amount.
+    fn assert_vault_token_balance_gt(
+        &self,
+        address: impl Into<String>,
+        amount: impl Into<Uint128>,
+    ) -> &Self {
+        let amount: Uint128 = amount.into();
+        let balance = self.query_vault_token_balance(address);
+        assert!(balance > amount);
+        self
+    }
+
+    /// Asserts that the vault token balance of the given address is less than the given amount.
+    fn assert_vault_token_balance_lt(
+        &self,
+        address: impl Into<String>,
+        amount: impl Into<Uint128>,
+    ) -> &Self {
+        let amount: Uint128 = amount.into();
+        let balance = self.query_vault_token_balance(address);
+        assert!(balance < amount);
+        self
     }
 }
