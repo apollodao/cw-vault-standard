@@ -1,5 +1,5 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{to_binary, Addr, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
+use cosmwasm_std::{to_binary, Addr, Binary, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
 use cw_utils::{Duration, Expiration};
 
 use crate::{ExtensionExecuteMsg, VaultStandardExecuteMsg};
@@ -9,6 +9,43 @@ pub const UNLOCKING_POSITION_CREATED_EVENT_TYPE: &str = "unlocking_position_crea
 /// Key for the lockup id attribute in the "unlocking position created" event
 /// that is emitted on call to `Unlock`.
 pub const UNLOCKING_POSITION_ATTR_KEY: &str = "lockup_id";
+
+/// The message that will be sent to the contract when calling `WithdrawUnlockedToContract`.
+#[cw_serde]
+pub struct WithdrawUnlockedMsg {
+    /// The amount of base tokens that were withdrawn.
+    pub amount: Uint128,
+    /// The native denom or cw20 contract address of the base token that was withdrawn.
+    pub base_token: String,
+    /// The custom message that will be sent to the contract.
+    pub msg: Binary,
+}
+
+impl WithdrawUnlockedMsg {
+    /// serializes the message
+    pub fn into_binary(self) -> StdResult<Binary> {
+        let msg = ReceiverExecuteMsg::ReceiveWithdrawn(self);
+        to_binary(&msg)
+    }
+
+    /// creates a cosmos_msg sending this struct to the named contract
+    pub fn into_cosmos_msg<T: Into<String>>(self, contract_addr: T) -> StdResult<CosmosMsg> {
+        let msg = self.into_binary()?;
+        let execute = WasmMsg::Execute {
+            contract_addr: contract_addr.into(),
+            msg,
+            funds: vec![],
+        };
+        Ok(execute.into())
+    }
+}
+
+/// The ExecuteMsg variant that must exist on the contract that is called by
+/// `WithdrawUnlockedToContract`.
+#[cw_serde]
+pub enum ReceiverExecuteMsg {
+    ReceiveWithdrawn(WithdrawUnlockedMsg),
+}
 
 /// Additional ExecuteMsg variants for vaults that enable the Lockup extension.
 #[cw_serde]
@@ -29,10 +66,9 @@ pub enum LockupExecuteMsg {
 
     /// EmergencyUnlock is called to initiate unlocking a locked position held
     /// by the vault.
-    /// This call should simply unlock `amount` of vault tokens, without
-    /// performing any other side effects that might cause the transaction
-    /// to fail. Such as for example compoundning rewards for an LP
-    /// position.
+    /// This call should simply unlock `amount` of vault tokens, without performing
+    /// any other side effects that might cause the transaction to fail. Such
+    /// as for example compoundning rewards for an LP position.
     EmergencyUnlock {
         /// The amount of vault tokens to unlock.
         amount: Uint128,
@@ -46,6 +82,17 @@ pub enum LockupExecuteMsg {
         recipient: Option<String>,
         /// The ID of the expired lockup to withdraw from.
         lockup_id: u64,
+    },
+
+    /// Withdraw an unlocking position that has finished unlocking, send the
+    /// base tokens to a contract, and execute a message on that contract.
+    WithdrawUnlockedToContract {
+        /// The ID of the expired lockup to withdraw from.
+        lockup_id: u64,
+        /// The contract address to send the withdrawn base tokens to.
+        contract: String,
+        /// The custom message to pass to the recipient contract.
+        msg: Binary,
     },
 }
 
