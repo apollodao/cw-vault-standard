@@ -1,7 +1,7 @@
 [package]
 name        = "cw-vault-standard-test-helpers"
+version     = "0.3.3"
 description = "Test helpers for cw-vault-standard compliant contracts."
-version     = { workspace = true }
 edition     = { workspace = true }
 authors     = { workspace = true }
 license     = { workspace = true }
