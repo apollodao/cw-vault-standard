@@ -37,7 +37,8 @@ where
         }
     }
 
-    /// Check the address against the api and return a checked version of the struct.
+    /// Check the address against the api and return a checked version of the
+    /// struct.
     pub fn check(&self, deps: Deps) -> StdResult<VaultContract<E, Q>> {
         VaultContract::new(&deps.querier, &deps.api.addr_validate(&self.addr)?)
     }
@@ -89,10 +90,7 @@ where
 
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit {
-                amount: amount.clone(),
-                recipient,
-            })?,
+            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
             funds: vec![coin(amount.u128(), &self.base_token)],
         }
         .into())
@@ -119,10 +117,7 @@ where
         let amount = amount.into();
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Redeem {
-                amount: amount.clone(),
-                recipient,
-            })?,
+            msg: to_binary(&VaultStandardExecuteMsg::<E>::Redeem { amount, recipient })?,
             funds: vec![coin(amount.u128(), &self.vault_token)],
         }
         .into())
