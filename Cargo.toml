@@ -3,6 +3,7 @@ members = [
     "cw-vault-standard",
     "test-helpers",
 ]
+resolver = "2"
 
 [workspace.package]
 edition           = "2021"
@@ -27,7 +28,6 @@ cw-vault-standard               = { version = "0.3.3", path = "./cw-vault-standa
 cw-vault-standard-test-helpers  = { version = "0.3.3", path = "./test-helpers" }
 
 # dev dependencies
-cw-it             = "0.2.0"
 proptest          = "1.2.0"
 
 
