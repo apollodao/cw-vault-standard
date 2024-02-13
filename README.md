@@ -67,3 +67,17 @@ The keeper extension can be used to add functionality for either whitelisted add
 
 ### Cw4626
 The Cw4626 extension is the only extension provided with in this repo that does not extend the standard `VaultStandardExecuteMsg` and `VaultStandardQueryMsg` enums by putting its variants inside of a `VaultExtension` variant. Instead it adds more variants at the top level, namely the variants from the [CW20 standard](https://github.com/CosmWasm/cw-plus/tree/main/packages/cw20) This is inspired by the [ERC-4626 standard on Ethereum](https://ethereum.org/en/developers/docs/standards/tokens/erc-4626/) and allows the vault to, instead of using a Cosmos native token as the vault token, have the vault contract be it's own vault token by also implementing the CW20 standard. This is useful if you are writing a vault on a chain that does not yet have the [TokenFactory module](https://github.com/CosmWasm/token-factory) available and can therefore not issue a Cosmos native token as the vault token.
+
+
+## Test Helpers
+
+This repo also contains some test helpers in the `packages/test-helpers` directory. These helpers can be used to test vault contracts that adhere to the standard.
+
+### Compatibility
+
+`cw-vault-standard` and `cw-vault-standard-test-helpers` packages have separate versions. The following table shows the compatibility between the two packages.
+
+| cw-vault-standard | test-helpers  |
+|-------------------|---------------|
+| v0.3.3            | v0.3.3        |
+| v0.4.0            | v0.3.3-v0.4.0 |
