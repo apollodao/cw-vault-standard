@@ -77,7 +77,7 @@ This repo also contains some test helpers in the `packages/test-helpers` directo
 
 `cw-vault-standard` and `cw-vault-standard-test-helpers` packages have separate versions. The following table shows the compatibility between the two packages.
 
-| cw-vault-standard | test-helpers |
-|-------------------|--------------|
-| v0.3.3            | v0.3.3       |
-| v0.4.0            | v0.3.3       |
+| cw-vault-standard | test-helpers  |
+|-------------------|---------------|
+| v0.3.3            | v0.3.3        |
+| v0.4.0            | v0.3.3-v0.4.0 |
