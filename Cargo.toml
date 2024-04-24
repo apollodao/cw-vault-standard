@@ -14,7 +14,7 @@ repository        = "https://github.com/apollodao/cw-vault-standard/"
 keywords          = ["cosmos", "cosmwasm"]
 
 [workspace.dependencies]
-cosmwasm-std                    = "1.2.1"
+cosmwasm-std                    = "1.5.4"
 schemars                        = "0.8.11"
 serde                           = { version = "1.0.152", default-features = false, features = ["derive"] }
 cosmwasm-schema                 = "1.2.1"
