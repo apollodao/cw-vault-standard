@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Remove QueryMsg::PreviewDeposit and QueryMsg::PreviewRedeem variants as these
+    are too difficult to implement for most vaults. Instead we recommend that
+    frontends use transaction simulations to preview deposits and redeems.
+
 ## [0.4.1] - 2024-07-13
 
 ### Added
