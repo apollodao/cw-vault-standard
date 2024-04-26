@@ -26,7 +26,7 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     }
 
     /// Returns the base token.
-    fn base_token(&self) -> String {
+    fn base_token(&self) -> Option<String> {
         self.query_info().base_token
     }
 
@@ -35,27 +35,26 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
         self.query_info().vault_token
     }
 
-    /// Calls `ExecuteMsg::Deposit` with the given amount and funds.
+    /// Calls `ExecuteMsg::Deposit` with the given funds.
     fn deposit_with_funds(
         &self,
-        amount: impl Into<Uint128>,
         recipient: Option<String>,
         funds: &[Coin],
         unwrap_choice: Unwrap,
         signer: &SigningAccount,
     ) -> &Self {
-        let amount: Uint128 = amount.into();
         unwrap_choice.unwrap(self.wasm().execute(
             &self.vault_addr(),
-            &ExecuteMsg::<Empty>::Deposit { amount, recipient },
+            &ExecuteMsg::<Empty>::Deposit { recipient },
             funds,
             signer,
         ));
         self
     }
 
-    /// Calls `ExecuteMsg::Deposit` with the given amount and the correct native coins in the funds field.
-    fn deposit(
+    /// Calls `ExecuteMsg::Deposit` with the given amount of the vault's base token. Will error
+    /// if the vault does not have a base token.
+    fn deposit_base_token(
         &self,
         amount: impl Into<Uint128>,
         recipient: Option<String>,
@@ -64,31 +63,31 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     ) -> &Self {
         let amount = amount.into();
         self.deposit_with_funds(
-            amount,
             recipient,
-            &[coin(amount.u128(), self.base_token())],
+            &[coin(amount.u128(), self.base_token().unwrap())],
             unwrap_choice,
             signer,
         )
     }
 
-    /// Calls `ExecuteMsg::Deposit` with the all of the account's native tokens.
-    fn deposit_all(
+    /// Calls `ExecuteMsg::Deposit` with the all of the account's base tokens. Will
+    /// error if the vault does not have a base token.
+    fn deposit_all_base_tokens(
         &self,
         recipient: Option<String>,
         unwrap_choice: Unwrap,
         signer: &SigningAccount,
     ) -> &Self {
-        let base_token_denom = self.query_info().base_token;
+        let base_token_denom = self.query_info().base_token.unwrap();
         let amount = self.query_native_token_balance(signer.address(), base_token_denom);
 
-        self.deposit(amount, recipient, unwrap_choice, signer)
+        self.deposit_base_token(amount, recipient, unwrap_choice, signer)
     }
 
-    /// Calls `ExecuteMsg::Redeem` with the given amount and funds.
+    /// Calls `ExecuteMsg::Redeem` with the given funds.
     fn redeem_with_funds(
         &self,
-        amount: Uint128,
+        redeem_into: Option<Vec<String>>,
         recipient: Option<String>,
         funds: &[Coin],
         unwrap_choice: Unwrap,
@@ -96,7 +95,10 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     ) -> &Self {
         unwrap_choice.unwrap(self.wasm().execute(
             &self.vault_addr(),
-            &ExecuteMsg::<Empty>::Redeem { amount, recipient },
+            &ExecuteMsg::<Empty>::Redeem {
+                redeem_into,
+                recipient,
+            },
             funds,
             signer,
         ));
@@ -106,15 +108,16 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     /// Calls `ExecuteMsg::Redeem` with the given amount and the correct native coins in the funds field.
     fn redeem(
         &self,
-        amount: Uint128,
+        redeem_into: Option<Vec<String>>,
+        amount: impl Into<u128>,
         recipient: Option<String>,
         unwrap_choice: Unwrap,
         signer: &SigningAccount,
     ) -> &Self {
         self.redeem_with_funds(
-            amount,
+            redeem_into,
             recipient,
-            &[coin(amount.u128(), self.vault_token())],
+            &[coin(amount.into(), self.vault_token())],
             unwrap_choice,
             signer,
         )
@@ -123,13 +126,14 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     /// Calls `ExecuteMsg::Redeem` with the all of the account's vault tokens.
     fn redeem_all(
         &self,
+        redeem_into: Option<Vec<String>>,
         recipient: Option<String>,
         unwrap_choice: Unwrap,
         signer: &SigningAccount,
     ) -> &Self {
         let amount =
             self.query_native_token_balance(signer.address(), self.query_info().vault_token);
-        self.redeem(amount, recipient, unwrap_choice, signer)
+        self.redeem(redeem_into, amount, recipient, unwrap_choice, signer)
     }
 
     /////// QUERIES ///////

@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{
-    coin, to_json_binary, Addr, CosmosMsg, Decimal, Deps, QuerierWrapper, StdResult, Uint128,
+    coin, to_json_binary, Addr, Coin, CosmosMsg, Decimal, Deps, QuerierWrapper, StdResult, Uint128,
     WasmMsg,
 };
 use schemars::JsonSchema;
@@ -38,7 +38,8 @@ where
         }
     }
 
-    /// Check the address against the api and return a checked version of the struct.
+    /// Check the address against the api and return a checked version of the
+    /// struct.
     pub fn check(&self, deps: Deps) -> StdResult<VaultContract<E, Q>> {
         VaultContract::new(&deps.querier, &deps.api.addr_validate(&self.addr)?)
     }
@@ -51,7 +52,7 @@ pub struct VaultContract<E = ExtensionExecuteMsg, Q = ExtensionQueryMsg> {
     /// The address of the vault contract.
     pub addr: Addr,
     /// The base token of the vault contract.
-    pub base_token: String,
+    pub base_token: Option<String>,
     /// The vault token denom of the vault contract.
     pub vault_token: String,
     /// The extension enum for ExecuteMsg variants.
@@ -80,33 +81,12 @@ where
         })
     }
 
-    /// Returns a CosmosMsg to deposit base tokens into the vault.
-    pub fn deposit(
-        &self,
-        amount: impl Into<Uint128>,
-        recipient: Option<String>,
-    ) -> StdResult<CosmosMsg> {
-        let amount = amount.into();
-
+    /// Returns a CosmosMsg to deposit the specified funds into the vault.
+    pub fn deposit(&self, funds: Vec<Coin>, recipient: Option<String>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Deposit {
-                amount: amount.clone(),
-                recipient,
-            })?,
-            funds: vec![coin(amount.u128(), &self.base_token)],
-        }
-        .into())
-    }
-
-    /// Returns a CosmosMsg to deposit tokens into the vault, leaving the native
-    /// funds field empty. This is useful for depositing cw20 tokens. The
-    /// caller should have approved spend for the cw20 tokens first.
-    pub fn deposit_cw20(&self, amount: Uint128, recipient: Option<String>) -> StdResult<CosmosMsg> {
-        Ok(WasmMsg::Execute {
-            contract_addr: self.addr.to_string(),
-            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
-            funds: vec![],
+            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Deposit { recipient })?,
+            funds,
         }
         .into())
     }
@@ -116,13 +96,14 @@ where
         &self,
         amount: impl Into<Uint128>,
         recipient: Option<String>,
+        redeem_into: Option<Vec<String>>,
     ) -> StdResult<CosmosMsg> {
         let amount = amount.into();
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
             msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Redeem {
-                amount: amount.clone(),
                 recipient,
+                redeem_into,
             })?,
             funds: vec![coin(amount.u128(), &self.vault_token)],
         }
@@ -170,30 +151,32 @@ where
         )
     }
 
-    /// Queries the vault to convert an amount of vault tokens to base tokens
+    /// Queries the vault to convert the given assets to an amount of vault
+    /// tokens
     pub fn query_convert_to_shares(
         &self,
         querier: &QuerierWrapper,
-        amount: impl Into<Uint128>,
+        assets: Vec<Coin>,
     ) -> StdResult<Uint128> {
         querier.query_wasm_smart(
             &self.addr,
-            &VaultStandardQueryMsg::<Q>::ConvertToShares {
-                amount: amount.into(),
-            },
+            &VaultStandardQueryMsg::<Q>::ConvertToShares { assets },
         )
     }
 
-    /// Queries the vault to convert an amount of base tokens to vault tokens
+    /// Queries the vault to convert the specified amount of vault tokens to
+    /// amounts of the specified assets
     pub fn query_convert_to_assets(
         &self,
         querier: &QuerierWrapper,
         amount: impl Into<Uint128>,
-    ) -> StdResult<Uint128> {
+        assets: Vec<String>,
+    ) -> StdResult<Vec<Coin>> {
         querier.query_wasm_smart(
             &self.addr,
             &VaultStandardQueryMsg::<Q>::ConvertToAssets {
                 amount: amount.into(),
+                assets,
             },
         )
     }

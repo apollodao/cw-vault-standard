@@ -9,10 +9,10 @@ use cw_vault_standard::ExtensionExecuteMsg;
 use super::CwVaultStandardRobot;
 
 pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> {
-    /// Calls `ExecuteMsg::ForceRedeem` with the given amount and funds.
+    /// Calls `ExecuteMsg::ForceRedeem` with the given funds.
     fn force_redeem_with_funds(
         &self,
-        amount: impl Into<Uint128>,
+        redeem_into: Option<Vec<String>>,
         recipient: Option<String>,
         funds: &[Coin],
         unwrap_choice: Unwrap,
@@ -23,7 +23,7 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
             &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::ForceUnlock(
                 ForceUnlockExecuteMsg::ForceRedeem {
                     recipient,
-                    amount: amount.into(),
+                    redeem_into,
                 },
             )),
             funds,
@@ -32,9 +32,10 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
         self
     }
 
-    /// Calls `ExecuteMsg::ForceRedeem` with the given amount and the correct native coins in the funds field.
+    /// Calls `ExecuteMsg::ForceRedeem` with the correct native coins in the funds field.
     fn force_redeem(
         &self,
+        redeem_into: Option<Vec<String>>,
         amount: impl Into<Uint128>,
         recipient: Option<String>,
         unwrap_choice: Unwrap,
@@ -42,7 +43,7 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
     ) -> &Self {
         let amount: Uint128 = amount.into();
         self.force_redeem_with_funds(
-            amount,
+            redeem_into,
             recipient,
             &[coin(amount.u128(), self.vault_token())],
             unwrap_choice,
@@ -53,12 +54,13 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
     /// Calls `ExecuteMsg::ForceRedeem` with the all of the account's vault tokens.
     fn force_redeem_all(
         &self,
+        redeem_into: Option<Vec<String>>,
         recipient: Option<String>,
         unwrap_choice: Unwrap,
         signer: &SigningAccount,
     ) -> &Self {
         let amount = self.query_vault_token_balance(signer.address());
-        self.force_redeem(amount, recipient, unwrap_choice, signer)
+        self.force_redeem(redeem_into, amount, recipient, unwrap_choice, signer)
     }
 
     /// Calls `ExecuteMsg::ForceWithdrawUnlocking` to withdraw tokens from a lockup position before
@@ -66,7 +68,7 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
     fn force_withdraw_unlocking(
         &self,
         lockup_id: u64,
-        amount: Option<impl Into<Uint128>>,
+        amounts: Option<Vec<Coin>>,
         recipient: Option<String>,
         unwrap_choice: Unwrap,
         signer: &SigningAccount,
@@ -75,7 +77,7 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
             &self.vault_addr(),
             &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::ForceUnlock(
                 ForceUnlockExecuteMsg::ForceWithdrawUnlocking {
-                    amount: amount.map(Into::into),
+                    amounts,
                     lockup_id,
                     recipient,
                 },

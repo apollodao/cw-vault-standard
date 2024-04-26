@@ -7,11 +7,13 @@
 //!
 //! ## Vault Standard Fundamentals
 //! There are a few things to know about the vault standard:
-//! * Each vault has one specific token that is used for deposits, withdrawals
-//!   and accounting. This token is called the `base token`.
 //! * Each vault has a `vault token` that represents the users share in the
-//!   vault. The number of vault tokens the user receives should be based on the
-//!   the number of base tokens they deposit.
+//!   vault.
+//! * Each vault may additionally define one specific token that is used for
+//!   accounting. This token is called the `base token`. In prior versions
+//!   of the standard, this was a requirement, but it is now optional.
+//!   Vaults are now free to use any accounting method they choose and can
+//!   accept any token as a deposit.
 //!
 //! ## How to create a vault contract that adheres to this standard
 //!
@@ -67,7 +69,6 @@
 //! * [Lockup](crate::extensions::lockup)
 //! * [ForceUnlock](crate::extensions::force_unlock)
 //! * [Keeper](crate::extensions::keeper)
-//! * [Cw4626](crate::extensions::cw4626)
 //!
 //! Each of these extensions are available in this repo via cargo features. To
 //! use them, you can import the crate with a feature flag like this:
@@ -83,7 +84,7 @@
 //! not immediately reedemable. Instead of normally calling the
 //! [`VaultStandardExecuteMsg::Redeem`] variant, the user has to call the
 //! `Unlock` variant on the Lockup extension `ExecuteMsg` and wait for a
-//! specified period of time before they can withdraw their base tokens via the
+//! specified period of time before they can withdraw their assets via the
 //! `WithdrawUnlocked` variant.
 //!
 //! ### ForceUnlock

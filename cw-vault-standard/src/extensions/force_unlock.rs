@@ -1,5 +1,5 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{to_json_binary, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
+use cosmwasm_std::{to_json_binary, Coin, CosmosMsg, StdResult, WasmMsg};
 
 use crate::{ExtensionExecuteMsg, VaultStandardExecuteMsg};
 
@@ -8,15 +8,18 @@ use crate::{ExtensionExecuteMsg, VaultStandardExecuteMsg};
 #[cw_serde]
 pub enum ForceUnlockExecuteMsg {
     /// Can be called by whitelisted addresses to bypass the lockup and
-    /// immediately return the base tokens. Used in the event of
+    /// immediately return the assets. Used in the event of
     /// liquidation. The caller must pass the native vault tokens in the funds
     /// field.
     ForceRedeem {
         /// The address which should receive the withdrawn assets. If not set,
         /// the caller address will be used instead.
         recipient: Option<String>,
-        /// The amount of vault tokens to force redeem.
-        amount: Uint128,
+        /// The denoms of the assets to be withdrawn. If not set, the return
+        /// asset or assets will be determined by the vault. Note that
+        /// the vault may not support all assets, and may return an
+        /// error if the requested assets are not supported.
+        redeem_into: Option<Vec<String>>,
     },
 
     /// Force withdraw from a position that is already unlocking (Unlock has
@@ -24,9 +27,9 @@ pub enum ForceUnlockExecuteMsg {
     ForceWithdrawUnlocking {
         /// The ID of the unlocking position from which to force withdraw
         lockup_id: u64,
-        /// Optional amount of base tokens to be force withdrawn.
+        /// Optional amount of assets to be force withdrawn.
         /// If None is passed, the entire position will be force withdrawn.
-        amount: Option<Uint128>,
+        amounts: Option<Vec<Coin>>,
         /// The address which should receive the withdrawn assets. If not set,
         /// the assets will be sent to the caller.
         recipient: Option<String>,

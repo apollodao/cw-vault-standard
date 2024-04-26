@@ -2,7 +2,7 @@
 /// not immediately reedemable. Instead of normally calling the
 /// `VaultStandardExecuteMsg::Redeem` variant, the user has to call the `Unlock`
 /// variant on the Lockup extension `ExecuteMsg` and wait for a specified period
-/// of time before they can withdraw their base tokens via the
+/// of time before they can withdraw their assets via the
 /// `WithdrawUnlocked` variant.
 #[cfg(feature = "lockup")]
 #[cfg_attr(docsrs, doc(cfg(feature = "lockup")))]
