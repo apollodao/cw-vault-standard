@@ -93,7 +93,7 @@ where
     /// Returns the amount of assets managed by the vault denominated in base
     /// tokens. Useful for display purposes, and does not have to confer the
     /// exact amount of base tokens.
-    #[returns(Uint128)]
+    #[returns(Vec<Coin>)]
     TotalAssets {},
 
     /// Returns `Uint128` total amount of vault tokens in circulation.
