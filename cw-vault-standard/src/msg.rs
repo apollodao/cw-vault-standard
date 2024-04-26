@@ -90,22 +90,6 @@ where
     #[returns(VaultInfoResponse)]
     Info {},
 
-    /// Returns `Uint128` amount of vault tokens that will be returned for the
-    /// passed in `amount` of base tokens.
-    ///
-    /// Allows an on-chain or off-chain user to simulate the effects of their
-    /// deposit at the current block, given current on-chain conditions.
-    ///
-    /// Must return as close to and no more than the exact amount of vault
-    /// tokens that would be minted in a deposit call in the same transaction.
-    /// I.e. Deposit should return the same or more vault tokens as
-    /// PreviewDeposit if called in the same transaction.
-    #[returns(Uint128)]
-    PreviewDeposit {
-        /// The amount of base tokens to preview depositing.
-        amount: Uint128,
-    },
-
     /// Returns `Uint128` amount of base tokens that would be withdrawn in
     /// exchange for redeeming `amount` of vault tokens.
     ///

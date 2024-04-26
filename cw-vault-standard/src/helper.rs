@@ -131,20 +131,6 @@ where
         querier.query_wasm_smart(&self.addr, &VaultStandardQueryMsg::<Q>::Info {})
     }
 
-    /// Queries the vault for a preview of a deposit
-    pub fn query_preview_deposit(
-        &self,
-        querier: &QuerierWrapper,
-        amount: impl Into<Uint128>,
-    ) -> StdResult<Uint128> {
-        querier.query_wasm_smart(
-            &self.addr,
-            &VaultStandardQueryMsg::<Q>::PreviewDeposit {
-                amount: amount.into(),
-            },
-        )
-    }
-
     /// Queries the vault for a preview of a redeem
     pub fn query_preview_redeem(
         &self,
