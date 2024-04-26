@@ -131,20 +131,6 @@ where
         querier.query_wasm_smart(&self.addr, &VaultStandardQueryMsg::<Q>::Info {})
     }
 
-    /// Queries the vault for a preview of a redeem
-    pub fn query_preview_redeem(
-        &self,
-        querier: &QuerierWrapper,
-        amount: impl Into<Uint128>,
-    ) -> StdResult<Uint128> {
-        querier.query_wasm_smart(
-            &self.addr,
-            &VaultStandardQueryMsg::<Q>::PreviewRedeem {
-                amount: amount.into(),
-            },
-        )
-    }
-
     /// Queries the vault for the total assets held in the vault
     pub fn query_total_assets(&self, querier: &QuerierWrapper) -> StdResult<Uint128> {
         querier.query_wasm_smart(&self.addr, &VaultStandardQueryMsg::<Q>::TotalAssets {})

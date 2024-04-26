@@ -90,20 +90,6 @@ where
     #[returns(VaultInfoResponse)]
     Info {},
 
-    /// Returns `Uint128` amount of base tokens that would be withdrawn in
-    /// exchange for redeeming `amount` of vault tokens.
-    ///
-    /// Allows an on-chain or off-chain user to simulate the effects of their
-    /// redeem at the current block, given current on-chain conditions.
-    ///
-    /// Must return as close to and no more than the exact amount of base tokens
-    /// that would be withdrawn in a redeem call in the same transaction.
-    #[returns(Uint128)]
-    PreviewRedeem {
-        /// The amount of vault tokens to preview redeeming.
-        amount: Uint128,
-    },
-
     /// Returns the amount of assets managed by the vault denominated in base
     /// tokens. Useful for display purposes, and does not have to confer the
     /// exact amount of base tokens.
