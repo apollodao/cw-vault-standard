@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{
-    coin, to_binary, Addr, Api, CosmosMsg, QuerierWrapper, StdResult, Uint128, WasmMsg,
+    coin, to_json_binary, Addr, Api, CosmosMsg, QuerierWrapper, StdResult, Uint128, WasmMsg,
 };
 use schemars::JsonSchema;
 use serde::Serialize;
@@ -81,7 +81,7 @@ where
 
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
+            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
             funds: vec![coin(amount.u128(), base_denom)],
         }
         .into())
@@ -93,7 +93,7 @@ where
     pub fn deposit_cw20(&self, amount: Uint128, recipient: Option<String>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
+            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
             funds: vec![],
         }
         .into())
@@ -109,7 +109,7 @@ where
         let amount = amount.into();
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_binary(&VaultStandardExecuteMsg::<E>::Redeem { amount, recipient })?,
+            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Redeem { amount, recipient })?,
             funds: vec![coin(amount.u128(), vault_token_denom)],
         }
         .into())

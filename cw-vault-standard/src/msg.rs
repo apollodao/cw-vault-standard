@@ -6,7 +6,7 @@ use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{to_binary, Coin, CosmosMsg, Empty, StdResult, Uint128, WasmMsg};
+use cosmwasm_std::{to_json_binary, Coin, CosmosMsg, Empty, StdResult, Uint128, WasmMsg};
 use schemars::JsonSchema;
 
 /// The default ExecuteMsg variants that all vaults must implement.
@@ -51,7 +51,7 @@ impl VaultStandardExecuteMsg {
     pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr,
-            msg: to_binary(&self)?,
+            msg: to_json_binary(&self)?,
             funds,
         }
         .into())
