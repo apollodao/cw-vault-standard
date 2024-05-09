@@ -24,25 +24,3 @@ pub mod force_unlock;
 #[cfg(feature = "keeper")]
 #[cfg_attr(docsrs, doc(cfg(feature = "keeper")))]
 pub mod keeper;
-
-/// The Cw4626 extension is the only extension provided with in this repo that
-/// does not extend the standard `ExecuteMsg` and `QueryMsg` enums with by
-/// putting its variants inside of a `VaultExtension` variant. Instead it adds
-/// more variants at the top level, namely the variants from the [CW20
-/// standard](https://github.com/CosmWasm/cw-plus/tree/main/packages/cw20) This
-/// is inspired by the [ERC-4626 standard on
-/// Ethereum](https://ethereum.org/en/developers/docs/standards/tokens/erc-4626/)
-/// and allows the vault to, instead of using a Cosmos native token as the vault
-/// token, have the vault contract be it's own vault token by also implementing
-/// the CW20 standard. This is useful if you are writing a vault on a chain that
-/// does not yet have the [TokenFactory
-/// module](https://github.com/CosmWasm/token-factory) available and can
-/// therefore not issue a Cosmos native token as the vault token.
-#[cfg(feature = "cw4626")]
-#[cfg_attr(docsrs, doc(cfg(feature = "cw4626")))]
-#[deprecated(
-    since = "0.4.1",
-    note = "The CW4626 extension is deprecated and will be removed in a future release. \
-            Please use TokenFactory to create vault tokens instead."
-)]
-pub mod cw4626;
