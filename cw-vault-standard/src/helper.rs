@@ -144,6 +144,10 @@ where
         querier.query_wasm_smart(&self.addr, &VaultStandardQueryMsg::<Q>::Info {})
     }
 
+    #[deprecated(
+        since = "0.4.1",
+        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
+    )]
     /// Queries the vault for a preview of a deposit
     pub fn query_preview_deposit(
         &self,
@@ -158,6 +162,10 @@ where
         )
     }
 
+    #[deprecated(
+        since = "0.4.1",
+        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
+    )]
     /// Queries the vault for a preview of a redeem
     pub fn query_preview_redeem(
         &self,

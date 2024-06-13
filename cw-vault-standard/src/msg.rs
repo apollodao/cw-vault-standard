@@ -100,6 +100,10 @@ where
     /// tokens that would be minted in a deposit call in the same transaction.
     /// I.e. Deposit should return the same or more vault tokens as
     /// PreviewDeposit if called in the same transaction.
+    #[deprecated(
+        since = "0.4.1",
+        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
+    )]
     #[returns(Uint128)]
     PreviewDeposit {
         /// The amount of base tokens to preview depositing.
@@ -114,6 +118,10 @@ where
     ///
     /// Must return as close to and no more than the exact amount of base tokens
     /// that would be withdrawn in a redeem call in the same transaction.
+    #[deprecated(
+        since = "0.4.1",
+        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
+    )]
     #[returns(Uint128)]
     PreviewRedeem {
         /// The amount of vault tokens to preview redeeming.
