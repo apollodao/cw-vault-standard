@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove faulty usage of `to_binary` in `VaultContract` query helper functions.
 - Replace usage of deprecated `to_binary` with `to_json_binary`.
 - Deprecated `VaultStandardQueryMsg::PreviewDeposit` and `VaultStandardQueryMsg::PreviewRedeem`.
-    - There queries turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends.
+    - There queries turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends. These queries will be removed in the next major version.
+- Deprecated CW4626 Extension now that TokenFactory module is standard across all major Cosmos chains. The extension will be removed in the next major version.
 
 ## [0.3.3] - 2023-09-27
 
