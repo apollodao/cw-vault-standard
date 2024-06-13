@@ -2,7 +2,8 @@ use std::marker::PhantomData;
 
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{
-    coin, to_json_binary, Addr, CosmosMsg, Deps, QuerierWrapper, StdResult, Uint128, WasmMsg,
+    coin, to_json_binary, Addr, CosmosMsg, Decimal, Deps, QuerierWrapper, StdResult, Uint128,
+    WasmMsg,
 };
 use schemars::JsonSchema;
 use serde::Serialize;
@@ -190,6 +191,18 @@ where
         querier.query_wasm_smart(
             &self.addr,
             &VaultStandardQueryMsg::<Q>::TotalVaultTokenSupply {},
+        )
+    }
+
+    /// Queries the vault for the vault token exchange rate
+    pub fn query_vault_token_exchange_rate(
+        &self,
+        quote_denom: String,
+        querier: &QuerierWrapper,
+    ) -> StdResult<Decimal> {
+        querier.query_wasm_smart(
+            &self.addr,
+            &VaultStandardQueryMsg::<Q>::VaultTokenExchangeRate { quote_denom },
         )
     }
 

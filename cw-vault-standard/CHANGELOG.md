@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added `base_token` and `vault_token` fields to `VaultContract` helper struct.
+- Added `VaultStandardQueryMsg::VaultTokenExchangeRate` query message.
+
 ### Changed
 
 - Changes type of `VaultStandardInfoResponse::version` from `u16` to `String`
-- Add `base_token` and `vault_token` fields to `VaultContract` helper struct.
 - Remove faulty usage of `to_binary` in `VaultContract` query helper functions.
 - Replace usage of deprecated `to_binary` with `to_json_binary`.
 - Deprecated `VaultStandardQueryMsg::PreviewDeposit` and `VaultStandardQueryMsg::PreviewRedeem`.

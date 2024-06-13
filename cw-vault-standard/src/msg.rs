@@ -138,6 +138,18 @@ where
     #[returns(Uint128)]
     TotalVaultTokenSupply {},
 
+    /// Returns the exchange rate of vault tokens quoted in terms of the
+    /// supplied quote_denom. Returns a `Decimal` containing the amount of
+    /// `quote_denom` assets that can be exchanged for 1 unit of vault
+    /// tokens.
+    ///
+    /// May return an error if the quote denom is not supported by the vault.
+    #[returns(cosmwasm_std::Decimal)]
+    VaultTokenExchangeRate {
+        /// The quote denom to quote the exchange rate in.
+        quote_denom: String,
+    },
+
     /// The amount of vault tokens that the vault would exchange for the amount
     /// of assets provided, in an ideal scenario where all the conditions
     /// are met.
