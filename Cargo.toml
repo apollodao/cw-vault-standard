@@ -19,7 +19,6 @@ schemars                        = "0.8.11"
 serde                           = { version = "1.0.152", default-features = false, features = ["derive"] }
 cosmwasm-schema                 = "1.2.1"
 cw-utils                        = { version = "1.0.1" }
-cw20                            = { version = "1.0.1" }
 cw-storage-plus                 = "1.1.0"
 cw2                             = "1.1.0"
 mars-owner                      = "2.0.0"

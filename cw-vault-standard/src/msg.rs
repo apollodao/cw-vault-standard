@@ -17,8 +17,6 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
-        /// The amount of base tokens to deposit.
-        amount: Uint128,
         /// The optional recipient of the vault token. If not set, the caller
         /// address will be used instead.
         recipient: Option<String>,
@@ -30,16 +28,14 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// been passed to ExecuteMsg::Unlock.
     Redeem {
         /// An optional field containing which address should receive the
-        /// withdrawn base tokens. If not set, the caller address will be
+        /// withdrawn assets. If not set, the caller address will be
         /// used instead.
         recipient: Option<String>,
-        /// The amount of vault tokens sent to the contract. In the case that
-        /// the vault token is a Cosmos native denom, we of course have this
-        /// information in info.funds, but if the vault implements the
-        /// Cw4626 API, then we need this argument. We figured it's
-        /// better to have one API for both types of vaults, so we
-        /// require this argument.
-        amount: Uint128,
+        /// The denoms of the assets to be withdrawn. If not set, the return
+        /// asset or assets will be determined by the vault. Note that
+        /// the vault may not support all assets, and may return an
+        /// error if the requested assets are not supported.
+        redeem_into: Option<Vec<String>>,
     },
 
     /// Called to execute functionality of any enabled extensions.
@@ -90,48 +86,9 @@ where
     #[returns(VaultInfoResponse)]
     Info {},
 
-    /// Returns `Uint128` amount of vault tokens that will be returned for the
-    /// passed in `amount` of base tokens.
-    ///
-    /// Allows an on-chain or off-chain user to simulate the effects of their
-    /// deposit at the current block, given current on-chain conditions.
-    ///
-    /// Must return as close to and no more than the exact amount of vault
-    /// tokens that would be minted in a deposit call in the same transaction.
-    /// I.e. Deposit should return the same or more vault tokens as
-    /// PreviewDeposit if called in the same transaction.
-    #[deprecated(
-        since = "0.4.1",
-        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
-    )]
-    #[returns(Uint128)]
-    PreviewDeposit {
-        /// The amount of base tokens to preview depositing.
-        amount: Uint128,
-    },
-
-    /// Returns `Uint128` amount of base tokens that would be withdrawn in
-    /// exchange for redeeming `amount` of vault tokens.
-    ///
-    /// Allows an on-chain or off-chain user to simulate the effects of their
-    /// redeem at the current block, given current on-chain conditions.
-    ///
-    /// Must return as close to and no more than the exact amount of base tokens
-    /// that would be withdrawn in a redeem call in the same transaction.
-    #[deprecated(
-        since = "0.4.1",
-        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
-    )]
-    #[returns(Uint128)]
-    PreviewRedeem {
-        /// The amount of vault tokens to preview redeeming.
-        amount: Uint128,
-    },
-
-    /// Returns the amount of assets managed by the vault denominated in base
-    /// tokens. Useful for display purposes, and does not have to confer the
-    /// exact amount of base tokens.
-    #[returns(Uint128)]
+    /// Returns the amount of assets managed by the vault as a `Vec<Coin>`.
+    /// Useful for display purposes, such as calculating vault TVL.
+    #[returns(Vec<Coin>)]
     TotalAssets {},
 
     /// Returns `Uint128` total amount of vault tokens in circulation.
@@ -162,11 +119,11 @@ where
     /// when exchanging to and from.
     #[returns(Uint128)]
     ConvertToShares {
-        /// The amount of base tokens to convert to vault tokens.
-        amount: Uint128,
+        /// The assets to convert to vault tokens.
+        assets: Vec<Coin>,
     },
 
-    /// Returns the amount of base tokens that the Vault would exchange for
+    /// Returns the amount of assets that the vault would exchange for
     /// the `amount` of vault tokens provided, in an ideal scenario where all
     /// the conditions are met.
     ///
@@ -176,10 +133,12 @@ where
     /// price-per-share, and instead should reflect the "average-user’s"
     /// price-per-share, meaning what the average user should expect to see
     /// when exchanging to and from.
-    #[returns(Uint128)]
+    #[returns(Vec<Coin>)]
     ConvertToAssets {
-        /// The amount of vault tokens to convert to base tokens.
+        /// The amount of vault tokens to convert to assets.
         amount: Uint128,
+        /// The assets to convert the specified amount of vault tokens to.
+        assets: Vec<String>,
     },
 
     /// Handle queries of any enabled extensions.
@@ -206,8 +165,8 @@ pub enum ExtensionQueryMsg {
 /// instead of needing to do a costly SmartQuery.
 #[cw_serde]
 pub struct VaultStandardInfoResponse {
-    /// The version of the vault standard used by the vault as a semver compliant
-    /// string. E.g. "1.0.0" or "1.2.3-alpha.1"
+    /// The version of the vault standard used by the vault as a semver
+    /// compliant string. E.g. "1.0.0" or "1.2.3-alpha.1"
     pub version: String,
     /// A list of vault standard extensions used by the vault.
     /// E.g. ["lockup", "keeper"]
@@ -217,11 +176,11 @@ pub struct VaultStandardInfoResponse {
 /// Returned by QueryMsg::Info and contains information about this vault
 #[cw_serde]
 pub struct VaultInfoResponse {
-    /// The token that is accepted for deposits, withdrawals and used for
-    /// accounting in the vault. The denom if it is a native token and the
-    /// contract address if it is a cw20 token.
-    pub base_token: String,
-    /// Vault token. The denom if it is a native token and the contract address
-    /// if it is a cw20 token.
+    /// The token that is used for accounting in the vault. This should be the
+    /// denom if it is a native token. It is optional as some vaults do not
+    /// account in a specific token and instead may use some kind of virtual
+    /// shares or other type of accounting.
+    pub base_token: Option<String>,
+    /// The denom of the vault token.
     pub vault_token: String,
 }

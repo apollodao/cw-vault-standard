@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Remove QueryMsg::PreviewDeposit and QueryMsg::PreviewRedeem variants as these
+    are too difficult to implement for most vaults. Instead we recommend that
+    frontends use transaction simulations to preview deposits and redeems.
+- Remove CW4626 extension. Please use the regular vault standard with the
+    TokenFactory module instead. CW20 tokens should be seen as deprecated in Cosmos.
+- Removed the requirement for vaults to have a specific base token. Instead vaults
+    can now have multiple depositable and redeemable assets and may choose to
+    do their internal accounting in a different token than the depositable assets,
+    or do their accounting with something other than a token, such as concentrated
+    liquidity position shares.
+
 ## [0.4.1] - 2024-07-13
 
 ### Added

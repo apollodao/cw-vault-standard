@@ -15,7 +15,6 @@ default         = []
 lockup          = ["cw-utils"]
 force-unlock    = []
 keeper          = []
-cw4626          = ["cw20"]
 
 [package.metadata.docs.rs]
 all-features    = true
@@ -27,4 +26,3 @@ schemars        = { workspace = true }
 serde           = { workspace = true }
 cosmwasm-schema = { workspace = true }
 cw-utils        = { workspace = true, optional = true }
-cw20            = { workspace = true, optional = true }

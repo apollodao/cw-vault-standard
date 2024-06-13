@@ -19,13 +19,7 @@ pub enum LockupExecuteMsg {
     /// Emits an event with type `UNLOCKING_POSITION_CREATED_EVENT_TYPE` with
     /// an attribute with key `UNLOCKING_POSITION_ATTR_KEY` containing an u64
     /// lockup_id.
-    ///
-    /// Like Redeem, this takes an amount so that the same API can be used for
-    /// CW4626 and native tokens.
-    Unlock {
-        /// The amount of vault tokens to unlock.
-        amount: Uint128,
-    },
+    Unlock {},
 
     /// EmergencyUnlock is called to initiate unlocking a locked position held
     /// by the vault.
@@ -41,7 +35,7 @@ pub enum LockupExecuteMsg {
     /// Withdraw an unlocking position that has finished unlocking.
     WithdrawUnlocked {
         /// An optional field containing which address should receive the
-        /// withdrawn base tokens. If not set, the caller address will be
+        /// withdrawn assets. If not set, the caller address will be
         /// used instead.
         recipient: Option<String>,
         /// The ID of the expired lockup to withdraw from.
@@ -102,6 +96,6 @@ pub struct UnlockingPosition {
     /// A `cw_utils::Expiration` containing information about when the position
     /// completes unlocking.
     pub release_at: Expiration,
-    /// The amount of base tokens that are being unlocked.
-    pub base_token_amount: Uint128,
+    /// The assets that are being unlocked.
+    pub assets: Vec<Coin>,
 }
