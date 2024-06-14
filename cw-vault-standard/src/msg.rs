@@ -18,6 +18,11 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// parameter.
     Deposit {
         /// The amount of base tokens to deposit.
+        #[deprecated(
+            since = "0.4.1",
+            note = "This field will be removed in the next version. The amount \
+            of deposited assets should instead be read from the actual sent funds."
+        )]
         amount: Uint128,
         /// The optional recipient of the vault token. If not set, the caller
         /// address will be used instead.
@@ -39,6 +44,11 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
         /// Cw4626 API, then we need this argument. We figured it's
         /// better to have one API for both types of vaults, so we
         /// require this argument.
+        #[deprecated(
+            since = "0.4.1",
+            note = "This field will be removed in the next version. The amount \
+            of vault tokens should instead be read from the actual amount of sent vault tokens."
+        )]
         amount: Uint128,
     },
 

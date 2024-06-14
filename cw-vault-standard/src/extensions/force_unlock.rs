@@ -16,6 +16,11 @@ pub enum ForceUnlockExecuteMsg {
         /// the caller address will be used instead.
         recipient: Option<String>,
         /// The amount of vault tokens to force redeem.
+        #[deprecated(
+            since = "0.4.1",
+            note = "This field will be removed in the next version. The amount \
+            of vault tokens should instead be read from the actual amount of sent vault tokens."
+        )]
         amount: Uint128,
     },
 
