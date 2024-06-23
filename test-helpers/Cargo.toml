@@ -18,4 +18,4 @@ force-unlock = ["cw-vault-standard/force-unlock"]
 cosmwasm-std        = { workspace = true }
 cw-utils            = { workspace = true }
 cw-vault-standard   = { workspace = true }
-cw-it               = "0.3.1"
+cw-it = { git = "https://github.com/apollodao/cw-it.git", rev = "362c71a8f1603622ce291b2c49da093c02caeaec" }
