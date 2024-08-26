@@ -38,7 +38,8 @@ where
         }
     }
 
-    /// Check the address against the api and return a checked version of the struct.
+    /// Check the address against the api and return a checked version of the
+    /// struct.
     pub fn check(&self, deps: Deps) -> StdResult<VaultContract<E, Q>> {
         VaultContract::new(&deps.querier, &deps.api.addr_validate(&self.addr)?)
     }
