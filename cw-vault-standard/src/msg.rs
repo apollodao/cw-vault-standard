@@ -216,8 +216,8 @@ pub enum ExtensionQueryMsg {
 /// instead of needing to do a costly SmartQuery.
 #[cw_serde]
 pub struct VaultStandardInfoResponse {
-    /// The version of the vault standard used by the vault as a semver compliant
-    /// string. E.g. "1.0.0" or "1.2.3-alpha.1"
+    /// The version of the vault standard used by the vault as a semver
+    /// compliant string. E.g. "1.0.0" or "1.2.3-alpha.1"
     pub version: String,
     /// A list of vault standard extensions used by the vault.
     /// E.g. ["lockup", "keeper"]
