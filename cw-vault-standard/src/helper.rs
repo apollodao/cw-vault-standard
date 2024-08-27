@@ -91,23 +91,8 @@ where
 
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Deposit {
-                amount: amount.clone(),
-                recipient,
-            })?,
+            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Deposit { recipient })?,
             funds: vec![coin(amount.u128(), &self.base_token)],
-        }
-        .into())
-    }
-
-    /// Returns a CosmosMsg to deposit tokens into the vault, leaving the native
-    /// funds field empty. This is useful for depositing cw20 tokens. The
-    /// caller should have approved spend for the cw20 tokens first.
-    pub fn deposit_cw20(&self, amount: Uint128, recipient: Option<String>) -> StdResult<CosmosMsg> {
-        Ok(WasmMsg::Execute {
-            contract_addr: self.addr.to_string(),
-            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Deposit { amount, recipient })?,
-            funds: vec![],
         }
         .into())
     }
@@ -121,10 +106,7 @@ where
         let amount = amount.into();
         Ok(WasmMsg::Execute {
             contract_addr: self.addr.to_string(),
-            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Redeem {
-                amount: amount.clone(),
-                recipient,
-            })?,
+            msg: to_json_binary(&VaultStandardExecuteMsg::<E>::Redeem { recipient })?,
             funds: vec![coin(amount.u128(), &self.vault_token)],
         }
         .into())

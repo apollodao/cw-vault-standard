@@ -12,7 +12,6 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
     /// Calls `ExecuteMsg::ForceRedeem` with the given amount and funds.
     fn force_redeem_with_funds(
         &self,
-        amount: impl Into<Uint128>,
         recipient: Option<String>,
         funds: &[Coin],
         unwrap_choice: Unwrap,
@@ -21,10 +20,7 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
         unwrap_choice.unwrap(self.wasm().execute(
             &self.vault_addr(),
             &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::ForceUnlock(
-                ForceUnlockExecuteMsg::ForceRedeem {
-                    recipient,
-                    amount: amount.into(),
-                },
+                ForceUnlockExecuteMsg::ForceRedeem { recipient },
             )),
             funds,
             signer,
@@ -42,7 +38,6 @@ pub trait ForceUnlockVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a
     ) -> &Self {
         let amount: Uint128 = amount.into();
         self.force_redeem_with_funds(
-            amount,
             recipient,
             &[coin(amount.u128(), self.vault_token())],
             unwrap_choice,

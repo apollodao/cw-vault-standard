@@ -17,13 +17,6 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
-        /// The amount of base tokens to deposit.
-        #[deprecated(
-            since = "0.4.1",
-            note = "This field will be removed in the next version. The amount \
-            of deposited assets should instead be read from the actual sent funds."
-        )]
-        amount: Uint128,
         /// The optional recipient of the vault token. If not set, the caller
         /// address will be used instead.
         recipient: Option<String>,
@@ -38,18 +31,6 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
         /// withdrawn base tokens. If not set, the caller address will be
         /// used instead.
         recipient: Option<String>,
-        /// The amount of vault tokens sent to the contract. In the case that
-        /// the vault token is a Cosmos native denom, we of course have this
-        /// information in info.funds, but if the vault implements the
-        /// Cw4626 API, then we need this argument. We figured it's
-        /// better to have one API for both types of vaults, so we
-        /// require this argument.
-        #[deprecated(
-            since = "0.4.1",
-            note = "This field will be removed in the next version. The amount \
-            of vault tokens should instead be read from the actual amount of sent vault tokens."
-        )]
-        amount: Uint128,
     },
 
     /// Called to execute functionality of any enabled extensions.

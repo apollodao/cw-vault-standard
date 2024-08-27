@@ -38,16 +38,14 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     /// Calls `ExecuteMsg::Deposit` with the given amount and funds.
     fn deposit_with_funds(
         &self,
-        amount: impl Into<Uint128>,
         recipient: Option<String>,
         funds: &[Coin],
         unwrap_choice: Unwrap,
         signer: &SigningAccount,
     ) -> &Self {
-        let amount: Uint128 = amount.into();
         unwrap_choice.unwrap(self.wasm().execute(
             &self.vault_addr(),
-            &ExecuteMsg::<Empty>::Deposit { amount, recipient },
+            &ExecuteMsg::<Empty>::Deposit { recipient },
             funds,
             signer,
         ));
@@ -64,7 +62,6 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     ) -> &Self {
         let amount = amount.into();
         self.deposit_with_funds(
-            amount,
             recipient,
             &[coin(amount.u128(), self.base_token())],
             unwrap_choice,
@@ -88,7 +85,6 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     /// Calls `ExecuteMsg::Redeem` with the given amount and funds.
     fn redeem_with_funds(
         &self,
-        amount: Uint128,
         recipient: Option<String>,
         funds: &[Coin],
         unwrap_choice: Unwrap,
@@ -96,7 +92,7 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
     ) -> &Self {
         unwrap_choice.unwrap(self.wasm().execute(
             &self.vault_addr(),
-            &ExecuteMsg::<Empty>::Redeem { amount, recipient },
+            &ExecuteMsg::<Empty>::Redeem { recipient },
             funds,
             signer,
         ));
@@ -112,7 +108,6 @@ pub trait CwVaultStandardRobot<'a, R: Runner<'a> + 'a>: TestRobot<'a, R> {
         signer: &SigningAccount,
     ) -> &Self {
         self.redeem_with_funds(
-            amount,
             recipient,
             &[coin(amount.u128(), self.vault_token())],
             unwrap_choice,

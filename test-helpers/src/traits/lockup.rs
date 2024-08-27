@@ -13,16 +13,13 @@ pub trait LockedVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> 
     /// Calls `ExecuteMsg::Unlock` with the given amount and funds.
     fn unlock_with_funds(
         &self,
-        amount: impl Into<Uint128>,
         funds: &[Coin],
         unwrap_choice: Unwrap,
         signer: &SigningAccount,
     ) -> &Self {
         unwrap_choice.unwrap(self.wasm().execute(
             &self.vault_addr(),
-            &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::Lockup(LockupExecuteMsg::Unlock {
-                amount: amount.into(),
-            })),
+            &ExecuteMsg::VaultExtension(ExtensionExecuteMsg::Lockup(LockupExecuteMsg::Unlock {})),
             funds,
             signer,
         ));
@@ -39,7 +36,6 @@ pub trait LockedVaultRobot<'a, R: Runner<'a> + 'a>: CwVaultStandardRobot<'a, R> 
         let info = self.query_info();
         let amount: Uint128 = amount.into();
         self.unlock_with_funds(
-            amount,
             &[coin(amount.u128(), info.vault_token)],
             unwrap_choice,
             signer,
