@@ -146,42 +146,6 @@ where
         querier.query_wasm_smart(&self.addr, &VaultStandardQueryMsg::<Q>::Info {})
     }
 
-    #[deprecated(
-        since = "0.4.1",
-        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
-    )]
-    /// Queries the vault for a preview of a deposit
-    pub fn query_preview_deposit(
-        &self,
-        querier: &QuerierWrapper,
-        amount: impl Into<Uint128>,
-    ) -> StdResult<Uint128> {
-        querier.query_wasm_smart(
-            &self.addr,
-            &VaultStandardQueryMsg::<Q>::PreviewDeposit {
-                amount: amount.into(),
-            },
-        )
-    }
-
-    #[deprecated(
-        since = "0.4.1",
-        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
-    )]
-    /// Queries the vault for a preview of a redeem
-    pub fn query_preview_redeem(
-        &self,
-        querier: &QuerierWrapper,
-        amount: impl Into<Uint128>,
-    ) -> StdResult<Uint128> {
-        querier.query_wasm_smart(
-            &self.addr,
-            &VaultStandardQueryMsg::<Q>::PreviewRedeem {
-                amount: amount.into(),
-            },
-        )
-    }
-
     /// Queries the vault for the total assets held in the vault
     pub fn query_total_assets(&self, querier: &QuerierWrapper) -> StdResult<Uint128> {
         querier.query_wasm_smart(&self.addr, &VaultStandardQueryMsg::<Q>::TotalAssets {})
