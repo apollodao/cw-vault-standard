@@ -6,7 +6,7 @@ use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{to_binary, Coin, CosmosMsg, Empty, StdResult, Uint128, WasmMsg};
+use cosmwasm_std::{to_json_binary, Coin, CosmosMsg, Empty, StdResult, Uint128, WasmMsg};
 use schemars::JsonSchema;
 
 /// The default ExecuteMsg variants that all vaults must implement.
@@ -17,8 +17,6 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// Called to deposit into the vault. Native assets are passed in the funds
     /// parameter.
     Deposit {
-        /// The amount of base tokens to deposit.
-        amount: Uint128,
         /// The optional recipient of the vault token. If not set, the caller
         /// address will be used instead.
         recipient: Option<String>,
@@ -33,13 +31,6 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
         /// withdrawn base tokens. If not set, the caller address will be
         /// used instead.
         recipient: Option<String>,
-        /// The amount of vault tokens sent to the contract. In the case that
-        /// the vault token is a Cosmos native denom, we of course have this
-        /// information in info.funds, but if the vault implements the
-        /// Cw4626 API, then we need this argument. We figured it's
-        /// better to have one API for both types of vaults, so we
-        /// require this argument.
-        amount: Uint128,
     },
 
     /// Called to execute functionality of any enabled extensions.
@@ -51,7 +42,7 @@ impl VaultStandardExecuteMsg {
     pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr,
-            msg: to_binary(&self)?,
+            msg: to_json_binary(&self)?,
             funds,
         }
         .into())
@@ -90,36 +81,6 @@ where
     #[returns(VaultInfoResponse)]
     Info {},
 
-    /// Returns `Uint128` amount of vault tokens that will be returned for the
-    /// passed in `amount` of base tokens.
-    ///
-    /// Allows an on-chain or off-chain user to simulate the effects of their
-    /// deposit at the current block, given current on-chain conditions.
-    ///
-    /// Must return as close to and no more than the exact amount of vault
-    /// tokens that would be minted in a deposit call in the same transaction.
-    /// I.e. Deposit should return the same or more vault tokens as
-    /// PreviewDeposit if called in the same transaction.
-    #[returns(Uint128)]
-    PreviewDeposit {
-        /// The amount of base tokens to preview depositing.
-        amount: Uint128,
-    },
-
-    /// Returns `Uint128` amount of base tokens that would be withdrawn in
-    /// exchange for redeeming `amount` of vault tokens.
-    ///
-    /// Allows an on-chain or off-chain user to simulate the effects of their
-    /// redeem at the current block, given current on-chain conditions.
-    ///
-    /// Must return as close to and no more than the exact amount of base tokens
-    /// that would be withdrawn in a redeem call in the same transaction.
-    #[returns(Uint128)]
-    PreviewRedeem {
-        /// The amount of vault tokens to preview redeeming.
-        amount: Uint128,
-    },
-
     /// Returns the amount of assets managed by the vault denominated in base
     /// tokens. Useful for display purposes, and does not have to confer the
     /// exact amount of base tokens.
@@ -129,6 +90,18 @@ where
     /// Returns `Uint128` total amount of vault tokens in circulation.
     #[returns(Uint128)]
     TotalVaultTokenSupply {},
+
+    /// Returns the exchange rate of vault tokens quoted in terms of the
+    /// supplied quote_denom. Returns a `Decimal` containing the amount of
+    /// `quote_denom` assets that can be exchanged for 1 unit of vault
+    /// tokens.
+    ///
+    /// May return an error if the quote denom is not supported by the vault.
+    #[returns(cosmwasm_std::Decimal)]
+    VaultTokenExchangeRate {
+        /// The quote denom to quote the exchange rate in.
+        quote_denom: String,
+    },
 
     /// The amount of vault tokens that the vault would exchange for the amount
     /// of assets provided, in an ideal scenario where all the conditions
@@ -186,8 +159,9 @@ pub enum ExtensionQueryMsg {
 /// instead of needing to do a costly SmartQuery.
 #[cw_serde]
 pub struct VaultStandardInfoResponse {
-    /// The version of the vault standard used. A number, e.g. 1, 2, etc.
-    pub version: u16,
+    /// The version of the vault standard used by the vault as a semver
+    /// compliant string. E.g. "1.0.0" or "1.2.3-alpha.1"
+    pub version: String,
     /// A list of vault standard extensions used by the vault.
     /// E.g. ["lockup", "keeper"]
     pub extensions: Vec<String>,

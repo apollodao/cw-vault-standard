@@ -1,6 +1,6 @@
 [package]
 name            = "cw-vault-standard"
-version         = "0.3.3"
+version         = "0.4.1-rc.3"
 description     = "A standard interface for tokenized vaults written in CosmWasm"
 documentation   = "https://docs.rs/cw-vault-standard"
 readme          = "README.md"
@@ -15,7 +15,6 @@ default         = []
 lockup          = ["cw-utils"]
 force-unlock    = []
 keeper          = []
-cw4626          = ["cw20"]
 
 [package.metadata.docs.rs]
 all-features    = true
@@ -27,4 +26,3 @@ schemars        = { workspace = true }
 serde           = { workspace = true }
 cosmwasm-schema = { workspace = true }
 cw-utils        = { workspace = true, optional = true }
-cw20            = { workspace = true, optional = true }
