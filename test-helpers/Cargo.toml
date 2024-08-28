@@ -1,6 +1,6 @@
 [package]
 name        = "cw-vault-standard-test-helpers"
-version     = "0.4.1"
+version     = "0.5.0"
 description = "Test helpers for cw-vault-standard compliant contracts."
 edition     = { workspace = true }
 authors     = { workspace = true }
@@ -17,5 +17,5 @@ force-unlock = ["cw-vault-standard/force-unlock"]
 [dependencies]
 cosmwasm-std        = { workspace = true }
 cw-utils            = { workspace = true }
-cw-vault-standard   = "0.3.3"
-cw-it               = "0.3.1"
+cw-vault-standard   = { workspace = true }
+cw-it               = "0.4.0"

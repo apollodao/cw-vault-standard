@@ -1,5 +1,5 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{to_binary, Addr, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
+use cosmwasm_std::{to_json_binary, Addr, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
 use cw_utils::{Duration, Expiration};
 
 use crate::{ExtensionExecuteMsg, VaultStandardExecuteMsg};
@@ -24,6 +24,11 @@ pub enum LockupExecuteMsg {
     /// CW4626 and native tokens.
     Unlock {
         /// The amount of vault tokens to unlock.
+        #[deprecated(
+            since = "0.4.1",
+            note = "This field will be removed in the next version. The amount \
+            of vault tokens should instead be read from the actual amount of sent vault tokens."
+        )]
         amount: Uint128,
     },
 
@@ -54,7 +59,7 @@ impl LockupExecuteMsg {
     pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr,
-            msg: to_binary(&VaultStandardExecuteMsg::VaultExtension(
+            msg: to_json_binary(&VaultStandardExecuteMsg::VaultExtension(
                 ExtensionExecuteMsg::Lockup(self),
             ))?,
             funds,

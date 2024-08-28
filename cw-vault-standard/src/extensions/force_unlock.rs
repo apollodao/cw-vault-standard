@@ -1,5 +1,5 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{to_binary, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
+use cosmwasm_std::{to_json_binary, Coin, CosmosMsg, StdResult, Uint128, WasmMsg};
 
 use crate::{ExtensionExecuteMsg, VaultStandardExecuteMsg};
 
@@ -16,6 +16,11 @@ pub enum ForceUnlockExecuteMsg {
         /// the caller address will be used instead.
         recipient: Option<String>,
         /// The amount of vault tokens to force redeem.
+        #[deprecated(
+            since = "0.4.1",
+            note = "This field will be removed in the next version. The amount \
+            of vault tokens should instead be read from the actual amount of sent vault tokens."
+        )]
         amount: Uint128,
     },
 
@@ -47,7 +52,7 @@ impl ForceUnlockExecuteMsg {
     pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr,
-            msg: to_binary(&VaultStandardExecuteMsg::VaultExtension(
+            msg: to_json_binary(&VaultStandardExecuteMsg::VaultExtension(
                 ExtensionExecuteMsg::ForceUnlock(self),
             ))?,
             funds,

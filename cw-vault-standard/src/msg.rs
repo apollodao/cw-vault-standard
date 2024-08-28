@@ -6,7 +6,7 @@ use crate::extensions::keeper::{KeeperExecuteMsg, KeeperQueryMsg};
 use crate::extensions::lockup::{LockupExecuteMsg, LockupQueryMsg};
 
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{to_binary, Coin, CosmosMsg, Empty, StdResult, Uint128, WasmMsg};
+use cosmwasm_std::{to_json_binary, Coin, CosmosMsg, Empty, StdResult, Uint128, WasmMsg};
 use schemars::JsonSchema;
 
 /// The default ExecuteMsg variants that all vaults must implement.
@@ -18,6 +18,11 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
     /// parameter.
     Deposit {
         /// The amount of base tokens to deposit.
+        #[deprecated(
+            since = "0.4.1",
+            note = "This field will be removed in the next version. The amount \
+            of deposited assets should instead be read from the actual sent funds."
+        )]
         amount: Uint128,
         /// The optional recipient of the vault token. If not set, the caller
         /// address will be used instead.
@@ -39,6 +44,11 @@ pub enum VaultStandardExecuteMsg<T = ExtensionExecuteMsg> {
         /// Cw4626 API, then we need this argument. We figured it's
         /// better to have one API for both types of vaults, so we
         /// require this argument.
+        #[deprecated(
+            since = "0.4.1",
+            note = "This field will be removed in the next version. The amount \
+            of vault tokens should instead be read from the actual amount of sent vault tokens."
+        )]
         amount: Uint128,
     },
 
@@ -51,7 +61,7 @@ impl VaultStandardExecuteMsg {
     pub fn into_cosmos_msg(self, contract_addr: String, funds: Vec<Coin>) -> StdResult<CosmosMsg> {
         Ok(WasmMsg::Execute {
             contract_addr,
-            msg: to_binary(&self)?,
+            msg: to_json_binary(&self)?,
             funds,
         }
         .into())
@@ -100,6 +110,10 @@ where
     /// tokens that would be minted in a deposit call in the same transaction.
     /// I.e. Deposit should return the same or more vault tokens as
     /// PreviewDeposit if called in the same transaction.
+    #[deprecated(
+        since = "0.4.1",
+        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
+    )]
     #[returns(Uint128)]
     PreviewDeposit {
         /// The amount of base tokens to preview depositing.
@@ -114,6 +128,10 @@ where
     ///
     /// Must return as close to and no more than the exact amount of base tokens
     /// that would be withdrawn in a redeem call in the same transaction.
+    #[deprecated(
+        since = "0.4.1",
+        note = "PreviewDeposit and PreviewRedeem turned out to be too difficult to implement in most cases. We recommend to use transaction simulation from non-contract clients such as frontends."
+    )]
     #[returns(Uint128)]
     PreviewRedeem {
         /// The amount of vault tokens to preview redeeming.
@@ -129,6 +147,18 @@ where
     /// Returns `Uint128` total amount of vault tokens in circulation.
     #[returns(Uint128)]
     TotalVaultTokenSupply {},
+
+    /// Returns the exchange rate of vault tokens quoted in terms of the
+    /// supplied quote_denom. Returns a `Decimal` containing the amount of
+    /// `quote_denom` assets that can be exchanged for 1 unit of vault
+    /// tokens.
+    ///
+    /// May return an error if the quote denom is not supported by the vault.
+    #[returns(cosmwasm_std::Decimal)]
+    VaultTokenExchangeRate {
+        /// The quote denom to quote the exchange rate in.
+        quote_denom: String,
+    },
 
     /// The amount of vault tokens that the vault would exchange for the amount
     /// of assets provided, in an ideal scenario where all the conditions
@@ -186,8 +216,9 @@ pub enum ExtensionQueryMsg {
 /// instead of needing to do a costly SmartQuery.
 #[cw_serde]
 pub struct VaultStandardInfoResponse {
-    /// The version of the vault standard used. A number, e.g. 1, 2, etc.
-    pub version: u16,
+    /// The version of the vault standard used by the vault as a semver
+    /// compliant string. E.g. "1.0.0" or "1.2.3-alpha.1"
+    pub version: String,
     /// A list of vault standard extensions used by the vault.
     /// E.g. ["lockup", "keeper"]
     pub extensions: Vec<String>,

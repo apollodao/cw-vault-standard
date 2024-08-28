@@ -7,14 +7,14 @@ resolver = "2"
 
 [workspace.package]
 edition           = "2021"
-authors           = ["Sturdy <sturdy@apollo.farm>"]
+authors           = ["Sturdy <sturdy@apollo.farm>", "Pacman <pacman@apollo.farm>"]
 license           = "Apache-2.0"
 homepage          = "https://github.com/apollodao/cw-vault-standard/"
 repository        = "https://github.com/apollodao/cw-vault-standard/"
 keywords          = ["cosmos", "cosmwasm"]
 
 [workspace.dependencies]
-cosmwasm-std                    = "1.5.4"
+cosmwasm-std                    = "1.5.5"
 schemars                        = "0.8.11"
 serde                           = { version = "1.0.152", default-features = false, features = ["derive"] }
 cosmwasm-schema                 = "1.2.1"
@@ -24,8 +24,8 @@ cw-storage-plus                 = "1.1.0"
 cw2                             = "1.1.0"
 mars-owner                      = "2.0.0"
 osmosis-std                     = "0.16.1"
-cw-vault-standard               = { version = "0.3.3", path = "./cw-vault-standard" }
-cw-vault-standard-test-helpers  = { version = "0.3.3", path = "./test-helpers" }
+cw-vault-standard               = { version = "0.4.1", path = "./cw-vault-standard" }
+cw-vault-standard-test-helpers  = { version = "0.5.0", path = "./test-helpers" }
 
 # dev dependencies
 proptest          = "1.2.0"

@@ -40,4 +40,9 @@ pub mod keeper;
 /// therefore not issue a Cosmos native token as the vault token.
 #[cfg(feature = "cw4626")]
 #[cfg_attr(docsrs, doc(cfg(feature = "cw4626")))]
+#[deprecated(
+    since = "0.4.1",
+    note = "The CW4626 extension is deprecated and will be removed in a future release. \
+            Please use TokenFactory to create vault tokens instead."
+)]
 pub mod cw4626;
