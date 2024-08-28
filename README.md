@@ -79,5 +79,5 @@ This repo also contains some test helpers in the `packages/test-helpers` directo
 
 | cw-vault-standard | test-helpers  |
 |-------------------|---------------|
-| v0.3.3            | v0.3.3        |
-| v0.4.0            | v0.3.3-v0.4.0 |
+| v0.3.3            | v0.3.3-0.4.1  |
+| v0.4.1            | v0.5.0        |
